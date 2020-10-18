@@ -1,0 +1,13 @@
+[package]
+name = "worm"
+version = "0.0.1"
+authors = ["franc90 <azarnowski1@gmail.com>"]
+edition = "2018"
+
+
+[dependencies]
+serde_json = "1.0.59"
+
+[dependencies.serde]
+version = "1.0.117"
+features = ["derive"]
