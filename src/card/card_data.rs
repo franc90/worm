@@ -1,5 +1,3 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use serde;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
@@ -11,25 +9,29 @@ pub struct CardData {
     sentence: String,
     sentence_gap: String,
     gap_term: String,
+    #[serde(default)]
+    picture: String,
 }
-pub type CardSetStruct = Rc<RefCell<CardSet>>;
 
+#[derive(Debug)]
 pub struct CardSet {
+    pub name: String,
     cards: Vec<CardData>,
     current: usize,
     reversed: bool,
 }
 
 impl CardSet {
-    pub fn new(terms: Vec<CardData>) -> Self {
+    pub fn new(name: &str, cards: Vec<CardData>) -> Self {
         Self {
-            cards: terms,
+            name: name.to_string(),
+            cards,
             current: 0,
             reversed: false,
         }
     }
 
-    pub fn get(&self) -> Option<String> {
+    pub fn get_text(&self) -> Option<String> {
         self.cards.get(self.current).map(|t| {
             if self.reversed {
                 t.translated.clone()
@@ -52,7 +54,10 @@ impl CardSet {
     }
 
     pub fn prev_card(&mut self) {
-        self.current = if self.current > 0 { self.current - 1 } else { self.current };
+        self.current = if self.current > 0 {
+            self.current - 1
+        } else {
+            self.current
+        };
     }
 }
-

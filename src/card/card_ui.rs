@@ -1,27 +1,30 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use crate::card::card_data::CardSetStruct;
 use cursive::Cursive;
-use cursive::views::TextView;
-use cursive::view::SizeConstraint;
 use cursive::traits::*;
+use cursive::view::SizeConstraint;
+use cursive::views::TextView;
 
-use crate::card_logic;
+use crate::select::select_data::SelectData;
 
-pub fn setup_deck(s: &mut Cursive, card_set: CardSetStruct) {
-    let init_text = card_set.borrow().get().unwrap().clone();
-    let reverse_card_set = card_set.clone();
-    let next_term_card_set = card_set.clone();
-    let prev_term_card_set = card_set.clone();
+pub const CARD_VIEW_NAME: &str = "card";
 
-    s.add_global_callback(' ', move |s| card_logic::reverse_card(s, reverse_card_set.clone()));
-    s.add_global_callback('n', move |s| card_logic::next_card(s, next_term_card_set.clone()));
-    s.add_global_callback('p', move |s| card_logic::prev_card(s, prev_term_card_set.clone()));
+pub fn setup_deck(siv: &mut Cursive) {
+    if let Some(app_data) = siv.user_data::<Rc<RefCell<SelectData>>>().cloned() {
+        let init_text = app_data
+            .borrow()
+            .get_selected_set()
+            .unwrap()
+            .get_text()
+            .unwrap()
+            .clone();
 
-    s.pop_layer();
-    s.add_fullscreen_layer(
-        TextView::new(init_text)
+        let text_view = TextView::new(init_text)
             .center()
-            .with_name("card")
-            .resized(SizeConstraint::Full, SizeConstraint::Full),
-    );
+            .with_name(CARD_VIEW_NAME)
+            .resized(SizeConstraint::Full, SizeConstraint::Full);
+
+        siv.add_fullscreen_layer(text_view);
+    }
 }
