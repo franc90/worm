@@ -1,8 +1,8 @@
 use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
-use cursive::Cursive;
 use cursive::align::HAlign;
+use cursive::Cursive;
 use cursive::traits::*;
 use cursive::view::SizeConstraint;
 use cursive::views::{DummyView, LinearLayout, SelectView, TextView};
@@ -14,14 +14,12 @@ pub const SELECT_VIEW_NAME: &str = "select_card_set";
 
 pub fn setup_view(siv: &mut Cursive) {
     if let Some(select_data) = siv.user_data::<Rc<RefCell<SelectData>>>().cloned() {
-        let items: Vec<(String, usize)> = select_data
-            .borrow()
-            .get_sets_name_and_idx();
+        let items: Vec<(String, usize)> = select_data.borrow().get_sets_name_and_idx();
 
         let select_view = SelectView::new()
             .with_all(items)
             .h_align(HAlign::Center)
-            .on_submit(show_card_set)
+            .on_submit(|siv, _| select_logic::show_card_set(siv))
             .on_select(update_selected_set)
             .with_name(SELECT_VIEW_NAME)
             .resized(SizeConstraint::Full, SizeConstraint::Full);
@@ -34,10 +32,6 @@ pub fn setup_view(siv: &mut Cursive) {
                 .resized(SizeConstraint::Full, SizeConstraint::Full),
         );
     }
-}
-
-fn show_card_set(siv: &mut Cursive, _: &usize) {
-    select_logic::show_card_set(siv);
 }
 
 fn update_selected_set(siv: &mut Cursive, item: &usize) {
