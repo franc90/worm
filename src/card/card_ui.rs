@@ -6,16 +6,14 @@ use cursive::traits::*;
 use cursive::view::SizeConstraint;
 use cursive::views::TextView;
 
-use crate::select::select_data::SelectData;
+use crate::card::card_data::CardSet;
 
 pub const CARD_VIEW_NAME: &str = "card";
 
 pub fn setup_deck(siv: &mut Cursive) {
-    if let Some(app_data) = siv.user_data::<Rc<RefCell<SelectData>>>().cloned() {
+    if let Some(app_data) = siv.user_data::<Rc<RefCell<CardSet>>>().cloned() {
         let init_text = app_data
             .borrow()
-            .get_selected_set()
-            .unwrap()
             .get_text()
             .unwrap()
             .clone();

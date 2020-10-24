@@ -8,9 +8,7 @@ pub struct CardData {
     pronunciation: String,
     sentence: String,
     sentence_gap: String,
-    gap_term: String,
-    #[serde(default)]
-    picture: String,
+    gap_term: String
 }
 
 #[derive(Debug)]
@@ -36,7 +34,7 @@ impl CardSet {
             if self.reversed {
                 t.translated.clone()
             } else {
-                t.word.clone()
+                format!("{}\n{}", t.word, t.pronunciation)
             }
         })
     }

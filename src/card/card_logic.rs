@@ -5,7 +5,6 @@ use std::rc::Rc;
 use cursive::Cursive;
 use cursive::views::{TextView, ViewRef};
 
-use crate::select::select_data::SelectData;
 use crate::card::card_data::CardSet;
 use crate::card::card_ui::CARD_VIEW_NAME;
 
@@ -26,10 +25,9 @@ where
     F: FnOnce(&mut CardSet),
 {
     if let Some(mut view) = siv.find_name::<TextView>(CARD_VIEW_NAME) {
-        if let Some(app_data) = siv.user_data::<Rc<RefCell<SelectData>>>().cloned() {
-            let mut data: RefMut<SelectData> = RefCell::borrow_mut(&app_data);
-            let card_set: &mut CardSet = data.get_selected_set_mut().unwrap();
-            cb(card_set);
+        if let Some(app_data) = siv.user_data::<Rc<RefCell<CardSet>>>().cloned() {
+            let mut card_set: RefMut<CardSet> = RefCell::borrow_mut(&app_data);
+            cb(&mut card_set);
             update_display(siv, &mut view, &card_set);
         }
     }
