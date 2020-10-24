@@ -1,0 +1,32 @@
+[
+  {
+    "word": "alpaca",
+    "translated": "alpaka",
+    "explanation": "a domesticated mammal especially of Per",
+    "pronunciation": "/al-ˈpa-kə/",
+    "sentence": "The boutique features items made from alpaca fiber..",
+    "type": "noun",
+    "sentence_gap": "The boutique features items made from ______ fiber.",
+    "gap_term": "alpaca"
+  },
+  {
+    "word": "llama",
+    "translated": "lama",
+    "explanation": "wild or domesticated, long-necked, South American mammals related to the camels but smaller and without a hump",
+    "pronunciation": "/lla·ma/",
+    "sentence": "The llama represents the Inca’s sturdy beast of burden.",
+    "type": "noun",
+    "sentence_gap": "The ______s represents the Inca’s sturdy beast of burden.",
+    "gap_term": "llama"
+  },
+  {
+    "word": "puma",
+    "translated": "puma",
+    "explanation": "",
+    "pronunciation": "/pu·ma/",
+    "sentence": "Adult pumas can sometimes weigh over 200 pounds.",
+    "type": "noun",
+    "sentence_gap": "Adult ______s can sometimes weigh over 200 pounds..",
+    "gap_term": "puma"
+  }
+]

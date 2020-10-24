@@ -1,28 +1,36 @@
 use std::cell::RefCell;
+use std::error::Error;
+use std::fs::File;
+use std::io::BufReader;
+use std::path::Path;
 use std::rc::Rc;
 
-use serde_json::Result;
+use clap::{App, Arg};
 
-use card::card_data;
 use card::card_logic;
-use test_data::{SET_1, SET_2};
 
-use crate::card::card_data::CardData;
+use crate::card::card_data::{CardData, CardSet};
 use crate::card::card_ui;
 
 mod card;
-mod test_data;
 
-fn main() -> Result<()> {
-    let set1: Vec<CardData> = serde_json::from_str(SET_1)?;
-    let set2: Vec<CardData> = serde_json::from_str(SET_2)?;
+fn main() {
+    let matches = App::new("worm")
+        .arg(
+            Arg::with_name("INPUT")
+                .help("path to json file with words")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
 
-    let card_set1 = card_data::CardSet::new("set1", set1);
-    let card_set2 = card_data::CardSet::new("set2", set2);
-    let app_data = Rc::new(RefCell::new(card_set2));
+    let input_file_path = matches.value_of("INPUT").unwrap();
+    let cards = read_cards_from_file(input_file_path).unwrap();
+    let card_set = CardSet::new(input_file_path, cards);
+    let card_set = Rc::new(RefCell::new(card_set));
 
     let mut siv = cursive::default();
-    siv.set_user_data(app_data);
+    siv.set_user_data(card_set);
     siv.add_global_callback('q', |s| s.quit());
     siv.add_global_callback(' ', |s| card_logic::reverse_card(s));
     siv.add_global_callback('n', |s| card_logic::next_card(s));
@@ -32,5 +40,15 @@ fn main() -> Result<()> {
     card_ui::setup_deck(&mut siv);
 
     siv.run();
-    Ok(())
+}
+
+fn read_cards_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<CardData>, Box<dyn Error>> {
+    let file = File::open(path)?;
+    let reader = BufReader::new(file);
+
+    // Read the JSON contents of the file as an instance of `User`.
+    let data = serde_json::from_reader(reader)?;
+
+    // Return the `User`.
+    Ok(data)
 }

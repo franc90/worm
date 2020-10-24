@@ -1,0 +1,22 @@
+[
+  {
+    "word": "juxtaposition",
+    "translated": "zestawienie (jako kontrast)",
+    "explanation": "the act or an instance of placing two or more things side by side often to compare or contrast or to create an interesting effect",
+    "pronunciation": "/ˌjək-stə-pə-ˈzi-shən/",
+    "sentence": "Then juxtaposition of life and death is obviously important in the play.",
+    "type": "noun",
+    "sentence_gap": "Then ______ of life and death is obviously important in the play.",
+    "gap_term": "juxtaposition"
+  },
+  {
+    "word": "floccinaucinihilipilification",
+    "translated": "jednorazowy akt lub zwyczajowa skłonność do uznawania czegoś za bezwartościowe",
+    "explanation": "To describe, estimate or regard something as worthless.",
+    "pronunciation": "/ˌflɒksɪˌnɒsɪˌnɪhɪlɪˌpɪlɪfɪˈkeɪʃən/",
+    "sentence": "Let me indulge in the floccinaucinihilipilification of EU judges.",
+    "type": "noun",
+    "sentence_gap": "Let me indulge in the ______ of EU judges.",
+    "gap_term": "floccinaucinihilipilification"
+  }
+]
