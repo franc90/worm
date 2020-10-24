@@ -6,11 +6,15 @@ use std::path::Path;
 use std::rc::Rc;
 
 use clap::{App, Arg};
+use cursive::traits::*;
+use cursive::view::SizeConstraint;
+use cursive::views::{LinearLayout, TextView};
 
 use card::card_logic;
 
 use crate::card::card_data::{CardData, CardSet};
 use crate::card::card_ui;
+use cursive::align::HAlign;
 
 mod card;
 
@@ -37,8 +41,15 @@ fn main() {
     siv.add_global_callback('p', |s| card_logic::prev_card(s));
 
     siv.update_theme(|f| f.shadow = false);
-    card_ui::setup_deck(&mut siv);
+    let mut view = LinearLayout::vertical().child(
+        TextView::new("  q: quit | n: next | p: prev | space: turn card  ")
+            .h_align(HAlign::Right)
+            .fixed_height(2),
+    );
 
+    card_ui::setup_card_view(&mut siv, &mut view);
+
+    siv.add_fullscreen_layer(view.resized(SizeConstraint::Full, SizeConstraint::Full));
     siv.run();
 }
 

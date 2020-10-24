@@ -15,7 +15,7 @@ pub struct CardData {
 pub struct CardSet {
     pub name: String,
     cards: Vec<CardData>,
-    current: usize,
+    current_card: usize,
     reversed: bool,
 }
 
@@ -24,17 +24,17 @@ impl CardSet {
         Self {
             name: name.to_string(),
             cards,
-            current: 0,
+            current_card: 0,
             reversed: false,
         }
     }
 
     pub fn get_text(&self) -> Option<String> {
-        self.cards.get(self.current).map(|t| {
+        self.cards.get(self.current_card).map(|t| {
             if self.reversed {
                 t.translated.clone()
             } else {
-                format!("{}\n{}", t.word, t.pronunciation)
+                format!("{}\n\n{}", t.word, t.pronunciation)
             }
         })
     }
@@ -44,18 +44,18 @@ impl CardSet {
     }
 
     pub fn next_card(&mut self) {
-        self.current = if self.current + 1 < self.cards.len() {
-            self.current + 1
+        self.current_card = if self.current_card + 1 < self.cards.len() {
+            self.current_card + 1
         } else {
-            self.current
+            self.current_card
         };
     }
 
     pub fn prev_card(&mut self) {
-        self.current = if self.current > 0 {
-            self.current - 1
+        self.current_card = if self.current_card > 0 {
+            self.current_card - 1
         } else {
-            self.current
+            self.current_card
         };
     }
 }
