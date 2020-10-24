@@ -16,9 +16,18 @@ use crate::card::card_data::{CardData, CardSet};
 use crate::card::card_ui;
 use cursive::align::HAlign;
 
+use log::{info};
+use simplelog::{Config, LevelFilter, WriteLogger};
 mod card;
 
 fn main() {
+    WriteLogger::init(
+        LevelFilter::Info,
+        Config::default(),
+        File::create("worm.log").unwrap(),
+    )
+    .unwrap();
+
     let matches = App::new("worm")
         .arg(
             Arg::with_name("INPUT")
@@ -32,6 +41,7 @@ fn main() {
     let cards = read_cards_from_file(input_file_path).unwrap();
     let card_set = CardSet::new(input_file_path, cards);
     let card_set = Rc::new(RefCell::new(card_set));
+    info!("Read card set: {:?}", card_set);
 
     let mut siv = cursive::default();
     siv.set_user_data(card_set);
@@ -41,6 +51,7 @@ fn main() {
     siv.add_global_callback('p', |s| card_logic::prev_card(s));
 
     siv.update_theme(|f| f.shadow = false);
+    info!("Setting up main layout");
     let mut view = LinearLayout::vertical().child(
         TextView::new("  q: quit | n: next | p: prev | space: turn card  ")
             .h_align(HAlign::Right)
@@ -50,6 +61,7 @@ fn main() {
     card_ui::setup_card_view(&mut siv, &mut view);
 
     siv.add_fullscreen_layer(view.resized(SizeConstraint::Full, SizeConstraint::Full));
+    info!("Started");
     siv.run();
 }
 
