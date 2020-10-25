@@ -3,7 +3,7 @@ use cursive::traits::*;
 use cursive::view::SizeConstraint;
 use cursive::views::{LinearLayout, NamedView, ResizedView, TextView};
 
-pub const MAIN_LAYOUT_NAME: &str = "MAIN_LAYOUT";
+pub const MAIN_LAYOUT_NAME: &str = "main_layout";
 
 pub fn generate_main_layout() -> ResizedView<NamedView<LinearLayout>>{
     LinearLayout::vertical()

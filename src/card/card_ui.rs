@@ -1,9 +1,8 @@
 use cursive::align::VAlign;
+use cursive::Cursive;
 use cursive::traits::*;
 use cursive::view::SizeConstraint;
 use cursive::views::{LinearLayout, TextView};
-use cursive::Cursive;
-use serde::export::Option::Some;
 
 use crate::card::card_data::CardSet;
 use crate::layout::MAIN_LAYOUT_NAME;
@@ -54,28 +53,22 @@ pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
 }
 
 pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
+    fn set_optional_row(siv: &mut Cursive, row_name: &str, text: &Option<String>) {
+        if let Some(ref mut row) = siv.find_name::<TextView>(row_name) {
+            row.set_content(match &text {
+                Some(txt) => txt,
+                _ => "",
+            });
+        }
+    }
+
     let card_display = &convert_to_card_display(card_set);
     if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
         main_row.set_content(card_display.main_row.clone());
     }
-    if let Some(ref mut row2) = siv.find_name::<TextView>(ROW_2) {
-        row2.set_content(match &card_display.row2 {
-            Some(txt) => txt,
-            None => "",
-        });
-    }
-    if let Some(ref mut row3) = siv.find_name::<TextView>(ROW_3) {
-        row3.set_content(match &card_display.row3 {
-            Some(txt) => txt,
-            None => "",
-        });
-    }
-    if let Some(ref mut row4) = siv.find_name::<TextView>(ROW_4) {
-        row4.set_content(match &card_display.row4 {
-            Some(txt) => txt,
-            None => "",
-        });
-    }
+    set_optional_row(siv, ROW_2, &card_display.row2);
+    set_optional_row(siv, ROW_3, &card_display.row3);
+    set_optional_row(siv, ROW_4, &card_display.row4);
 }
 
 fn convert_to_card_display(card_set: &CardSet) -> CardDisplay {
