@@ -2,13 +2,13 @@ use serde;
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct CardData {
-    word: String,
-    translated: String,
-    explanation: String,
-    pronunciation: String,
-    sentence: String,
-    sentence_gap: String,
-    gap_term: String
+    pub word: String,
+    pub translated: String,
+    pub explanation: String,
+    pub pronunciation: String,
+    pub sentence: String,
+    pub sentence_gap: String,
+    pub gap_term: String,
 }
 
 #[derive(Debug)]
@@ -16,7 +16,7 @@ pub struct CardSet {
     pub name: String,
     cards: Vec<CardData>,
     current_card: usize,
-    reversed: bool,
+    pub reversed: bool,
 }
 
 impl CardSet {
@@ -29,14 +29,8 @@ impl CardSet {
         }
     }
 
-    pub fn get_text(&self) -> Option<String> {
-        self.cards.get(self.current_card).map(|t| {
-            if self.reversed {
-                t.translated.clone()
-            } else {
-                format!("{}\n\n{}", t.word, t.pronunciation)
-            }
-        })
+    pub fn get_current_card(&self) -> Option<&CardData> {
+        self.cards.get(self.current_card)
     }
 
     pub fn reverse_current_card(&mut self) {
