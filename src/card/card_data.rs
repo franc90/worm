@@ -14,7 +14,10 @@ pub struct CardSet {
     pub name: String,
     cards: Vec<CardData>,
     current_card: usize,
-    pub reversed: bool,
+    reversed: bool,
+    show_pronunciation: bool,
+    show_description: bool,
+    show_example: bool,
 }
 
 impl CardSet {
@@ -24,10 +27,61 @@ impl CardSet {
             cards,
             current_card: 0,
             reversed: false,
+            show_pronunciation: true,
+            show_description: false,
+            show_example: false,
         }
     }
 
-    pub fn get_current_card(&self) -> Option<&CardData> {
+    pub fn toggle_show_pronunciation(&mut self) {
+        self.show_pronunciation = !self.show_pronunciation;
+    }
+
+    pub fn toggle_show_description(&mut self) {
+        self.show_description = !self.show_description;
+    }
+
+    pub fn toggle_show_example(&mut self) {
+        self.show_example = !self.show_example;
+    }
+
+    pub fn get_main_text(&self) -> &str {
+        let card = self.get_current_card().unwrap();
+        if self.reversed {
+            &card.translated
+        } else {
+            &card.word
+        }
+    }
+
+    pub fn get_pronunciation(&self) -> Option<&str> {
+        let card = self.get_current_card().unwrap();
+        if self.show_pronunciation && !self.reversed {
+            Some(&card.pronunciation)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_desc(&self) -> Option<&str> {
+        let card = self.get_current_card().unwrap();
+        if self.show_description && !self.reversed {
+            Some(&card.explanation)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_example(&self) -> Option<&str> {
+        let card = self.get_current_card().unwrap();
+        if self.show_example && !self.reversed {
+            Some(&card.sentence)
+        } else {
+            None
+        }
+    }
+
+    fn get_current_card(&self) -> Option<&CardData> {
         self.cards.get(self.current_card)
     }
 

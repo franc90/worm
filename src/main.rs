@@ -34,6 +34,9 @@ fn main() {
     siv.add_global_callback(' ', |s| card_logic::reverse_card(s));
     siv.add_global_callback('n', |s| card_logic::next_card(s));
     siv.add_global_callback('p', |s| card_logic::prev_card(s));
+    siv.add_global_callback('s', |s| card_logic::toggle_show_pronunciation(s));
+    siv.add_global_callback('d', |s| card_logic::toggle_show_description(s));
+    siv.add_global_callback('e', |s| card_logic::toggle_show_example(s));
 
     siv.update_theme(|f| f.shadow = false);
 

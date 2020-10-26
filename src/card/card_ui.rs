@@ -54,11 +54,14 @@ pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
 }
 
 pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
-    fn set_optional_row(siv: &mut Cursive, row_name: &str, text: &Option<String>) {
+    fn set_optional_row<T>(siv: &mut Cursive, row_name: &str, text: Option<&str>, transform: T)
+    where
+        T: FnOnce(&str) -> String,
+    {
         if let Some(ref mut row) = siv.find_name::<TextView>(row_name) {
             row.set_content(match text {
-                Some(txt) => txt,
-                _ => "",
+                Some(txt) => transform(txt),
+                _ => String::new(),
             });
         }
     }
@@ -86,6 +89,15 @@ fn convert_to_card_display(card_set: &CardSet) -> CardDisplay {
             &card.sentence,
         )
     }
+    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |s| {
+        format!("{}", s)
+    });
+    set_optional_row(siv, ROW_3, card_set.get_desc(), |s| {
+        format!(" Description: {}", s)
+    });
+    set_optional_row(siv, ROW_4, card_set.get_example(), |s| {
+        format!(" Example:     {}", s)
+    });
 }
 
 fn compose_card_layout() -> LinearLayout {

@@ -7,16 +7,28 @@ use cursive::Cursive;
 use crate::card::card_data::CardSet;
 use crate::card::card_ui::update_card_view;
 
-pub fn reverse_card(siv: &mut Cursive) {
-    update_card_set(siv, |card_set| card_set.reverse_current_card());
-}
-
 pub fn next_card(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.next_card());
 }
 
 pub fn prev_card(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.prev_card());
+}
+
+pub fn reverse_card(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.reverse_current_card());
+}
+
+pub fn toggle_show_pronunciation(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_show_pronunciation());
+}
+
+pub fn toggle_show_description(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_show_description());
+}
+
+pub fn toggle_show_example(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_show_example());
 }
 
 fn update_card_set<F>(siv: &mut Cursive, cb: F)
