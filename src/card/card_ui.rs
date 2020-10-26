@@ -14,33 +14,6 @@ const ROW_2: &str = "row_2";
 const ROW_3: &str = "row_3";
 const ROW_4: &str = "row_4";
 
-#[derive(Debug)]
-struct CardDisplay {
-    main_row: String,
-    row2: Option<String>,
-    row3: Option<String>,
-    row4: Option<String>,
-}
-
-impl CardDisplay {
-    fn new(main_row: &str) -> Self {
-        Self {
-            main_row: String::from(main_row),
-            row2: None,
-            row3: None,
-            row4: None,
-        }
-    }
-    fn new_full(main_row: &str, add1: &str, add2: &str, add3: &str) -> Self {
-        Self {
-            main_row: String::from(main_row),
-            row2: Some(String::from(add1)),
-            row3: Some(String::from(add2)),
-            row4: Some(String::from(add3)),
-        }
-    }
-}
-
 pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(ref mut main_view) = siv.find_name::<LinearLayout>(MAIN_LAYOUT_NAME) {
         main_view.insert_child(
@@ -66,28 +39,8 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
         }
     }
 
-    let card_display = &convert_to_card_display(card_set);
     if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
-        main_row.set_content(card_display.main_row.clone());
-    }
-    let desc = card_display.row3.as_ref().map(|s| format!(" Description: {}", s));
-    let example = card_display.row4.as_ref().map(|s| format!(" Example:     {}", s));
-    set_optional_row(siv, ROW_2, &card_display.row2);
-    set_optional_row(siv, ROW_3, &desc);
-    set_optional_row(siv, ROW_4, &example);
-}
-
-fn convert_to_card_display(card_set: &CardSet) -> CardDisplay {
-    let card = card_set.get_current_card().unwrap();
-    if card_set.reversed {
-        CardDisplay::new(&card.translated)
-    } else {
-        CardDisplay::new_full(
-            &card.word,
-            &card.pronunciation,
-            &card.explanation,
-            &card.sentence,
-        )
+        main_row.set_content(card_set.get_main_text());
     }
     set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |s| {
         format!("{}", s)
