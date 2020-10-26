@@ -1,5 +1,6 @@
 use cursive::align::VAlign;
 use cursive::Cursive;
+use cursive::theme::Effect;
 use cursive::traits::*;
 use cursive::view::SizeConstraint;
 use cursive::views::{LinearLayout, TextView};
@@ -55,7 +56,7 @@ pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
 pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     fn set_optional_row(siv: &mut Cursive, row_name: &str, text: &Option<String>) {
         if let Some(ref mut row) = siv.find_name::<TextView>(row_name) {
-            row.set_content(match &text {
+            row.set_content(match text {
                 Some(txt) => txt,
                 _ => "",
             });
@@ -66,9 +67,11 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
         main_row.set_content(card_display.main_row.clone());
     }
+    let desc = card_display.row3.as_ref().map(|s| format!(" Description: {}", s));
+    let example = card_display.row4.as_ref().map(|s| format!(" Example:     {}", s));
     set_optional_row(siv, ROW_2, &card_display.row2);
-    set_optional_row(siv, ROW_3, &card_display.row3);
-    set_optional_row(siv, ROW_4, &card_display.row4);
+    set_optional_row(siv, ROW_3, &desc);
+    set_optional_row(siv, ROW_4, &example);
 }
 
 fn convert_to_card_display(card_set: &CardSet) -> CardDisplay {
@@ -90,15 +93,19 @@ fn compose_card_layout() -> LinearLayout {
         .child(
             TextView::new("")
                 .center()
+                .effect(Effect::Bold)
                 .v_align(VAlign::Bottom)
                 .with_name(MAIN_ROW)
                 .resized(SizeConstraint::Full, SizeConstraint::Full),
         )
-        .child(TextView::new(" ").max_height(1))
-        .child(TextView::new(" ").center().with_name(ROW_2).max_height(2))
-        .child(TextView::new(" ").max_height(1))
-        .child(TextView::new(" ").center().with_name(ROW_3).max_height(2))
-        .child(TextView::new(" ").max_height(1))
-        .child(TextView::new(" ").center().with_name(ROW_4).max_height(2))
-        .child(TextView::new(" ").resized(SizeConstraint::Full, SizeConstraint::Full))
+        .child(
+            LinearLayout::vertical()
+                .child(TextView::new(" ").max_height(1))
+                .child(TextView::new(" ").center().with_name(ROW_2).fixed_height(2))
+                .child(TextView::new(" ").resized(SizeConstraint::Full, SizeConstraint::Full))
+                .child(TextView::new(" ").with_name(ROW_3).max_height(4))
+                .child(TextView::new(" ").max_height(1))
+                .child(TextView::new(" ").with_name(ROW_4).max_height(4))
+                .child(TextView::new(" ").max_height(1)),
+        )
 }
