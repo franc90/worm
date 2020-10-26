@@ -42,9 +42,7 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
         main_row.set_content(card_set.get_main_text());
     }
-    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |s| {
-        format!("{}", s)
-    });
+    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |s| s.to_string());
     set_optional_row(siv, ROW_3, card_set.get_desc(), |s| {
         format!(" Description: {}", s)
     });

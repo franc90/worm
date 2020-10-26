@@ -1,5 +1,3 @@
-use serde;
-
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct CardData {
     pub word: String,
