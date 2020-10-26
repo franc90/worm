@@ -7,8 +7,6 @@ pub struct CardData {
     pub explanation: String,
     pub pronunciation: String,
     pub sentence: String,
-    pub sentence_gap: String,
-    pub gap_term: String,
 }
 
 #[derive(Debug)]
