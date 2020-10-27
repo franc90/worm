@@ -31,6 +31,12 @@ pub fn toggle_show_example(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_example());
 }
 
+pub fn refresh(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| {
+        card_set;
+    });
+}
+
 fn update_card_set<F>(siv: &mut Cursive, cb: F)
 where
     F: FnOnce(&mut CardSet),

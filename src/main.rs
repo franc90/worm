@@ -13,6 +13,7 @@ use card::card_logic;
 
 use crate::card::card_data::{CardData, CardSet};
 use crate::card::card_ui;
+use cursive::event::Event;
 
 mod card;
 mod layout;
@@ -37,6 +38,11 @@ fn main() {
     siv.add_global_callback('s', |s| card_logic::toggle_show_pronunciation(s));
     siv.add_global_callback('d', |s| card_logic::toggle_show_description(s));
     siv.add_global_callback('e', |s| card_logic::toggle_show_example(s));
+
+    siv.set_on_pre_event(Event::WindowResize, |s| {
+        info!("set_on_pre_event: refresh");
+        card_logic::refresh(s)
+    });
 
     siv.update_theme(|f| f.shadow = false);
 
