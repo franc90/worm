@@ -39,6 +39,7 @@ fn main() {
     siv.add_global_callback('d', |s| card_logic::toggle_show_description(s));
     siv.add_global_callback('e', |s| card_logic::toggle_show_example(s));
     siv.add_global_callback('t', |s| card_logic::toggle_show_title(s));
+    siv.add_global_callback('z', |s| card_logic::show_essential(s));
 
     siv.set_on_pre_event(Event::WindowResize, |s| {
         info!("set_on_pre_event: refresh");

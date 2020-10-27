@@ -53,6 +53,13 @@ impl CardSet {
         self.show_title = !self.show_title;
     }
 
+    pub fn show_essential(&mut self) {
+        self.show_pronunciation = false;
+        self.show_description = false;
+        self.show_example = false;
+        self.show_title = false;
+    }
+
     pub fn get_main_text(&self) -> &str {
         let card = self.get_current_card().unwrap();
         if self.reversed {

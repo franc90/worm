@@ -35,6 +35,10 @@ pub fn toggle_show_title(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_title());
 }
 
+pub fn show_essential(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.show_essential());
+}
+
 pub fn refresh(siv: &mut Cursive) {
     update_card_set(siv, |card_set| {
         card_set;
