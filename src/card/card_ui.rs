@@ -34,7 +34,7 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
         if let Some(ref mut row) = siv.find_name::<TextView>(row_name) {
             row.set_content(match text {
                 Some(txt) => transform(txt),
-                _ => String::new(),
+                _ => String::from(" "),
             });
         }
     }
