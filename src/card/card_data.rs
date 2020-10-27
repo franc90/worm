@@ -11,11 +11,12 @@ pub struct CardData {
 pub struct CardSet {
     pub name: String,
     cards: Vec<CardData>,
-    current_card: usize,
+    pub current_card: usize,
     reversed: bool,
     show_pronunciation: bool,
     show_description: bool,
     show_example: bool,
+    show_title: bool,
 }
 
 impl CardSet {
@@ -28,7 +29,12 @@ impl CardSet {
             show_pronunciation: true,
             show_description: false,
             show_example: false,
+            show_title: true,
         }
+    }
+
+    pub fn cards_len(&self) -> usize {
+        self.cards.len()
     }
 
     pub fn toggle_show_pronunciation(&mut self) {
@@ -43,12 +49,24 @@ impl CardSet {
         self.show_example = !self.show_example;
     }
 
+    pub fn toggle_show_title(&mut self) {
+        self.show_title = !self.show_title;
+    }
+
     pub fn get_main_text(&self) -> &str {
         let card = self.get_current_card().unwrap();
         if self.reversed {
             &card.translated
         } else {
             &card.word
+        }
+    }
+
+    pub fn get_title(&self) -> Option<&str> {
+        if self.show_title {
+            Some(&self.name)
+        } else {
+            None
         }
     }
 

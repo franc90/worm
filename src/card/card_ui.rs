@@ -13,6 +13,7 @@ const MAIN_ROW: &str = "main_row";
 const ROW_2: &str = "row_2";
 const ROW_3: &str = "row_3";
 const ROW_4: &str = "row_4";
+const TITLE: &str = "title";
 
 pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(ref mut main_view) = siv.find_name::<LinearLayout>(MAIN_LAYOUT_NAME) {
@@ -42,17 +43,26 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
         main_row.set_content(card_set.get_main_text());
     }
-    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |s| s.to_string());
-    set_optional_row(siv, ROW_3, card_set.get_desc(), |s| {
-        format!(" Description: {}", s)
+    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |p| p.to_string());
+    set_optional_row(siv, ROW_3, card_set.get_desc(), |description| {
+        format!(" Description: {}", description)
     });
-    set_optional_row(siv, ROW_4, card_set.get_example(), |s| {
-        format!(" Example:     {}", s)
+    set_optional_row(siv, ROW_4, card_set.get_example(), |example| {
+        format!(" Example:     {}", example)
+    });
+    set_optional_row(siv, TITLE, card_set.get_title(), |name| {
+        format!(
+            " {}: {}/{}",
+            name,
+            card_set.current_card + 1,
+            card_set.cards_len()
+        )
     });
 }
 
 fn compose_card_layout() -> LinearLayout {
     LinearLayout::vertical()
+        .child(TextView::new("").with_name(TITLE).fixed_height(1))
         .child(
             TextView::new("")
                 .center()
