@@ -66,6 +66,7 @@ fn set_up_logger() {
 
 fn parse_comman_line_args<'a>() -> ArgMatches<'a> {
     let matches = App::new("worm")
+        .version(env!("CARGO_PKG_VERSION"))
         .arg(
             Arg::with_name("INPUT")
                 .help("path to json file with words")
