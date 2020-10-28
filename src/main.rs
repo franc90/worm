@@ -33,7 +33,7 @@ fn main() {
     info!("Setting up cursive");
     let mut siv = cursive::default();
     siv.set_user_data(card_set.clone());
-    shortcuts::ALL_CALLBACKS.iter().for_each(|shortcut| {
+    shortcuts::ALL_SHORTCUTS.iter().for_each(|shortcut| {
         let shortcut = shortcut.clone();
         siv.add_global_callback(shortcut.event(), move |siv| shortcut.call(siv));
     });

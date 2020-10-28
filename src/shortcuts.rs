@@ -3,7 +3,7 @@ use cursive::event::Event;
 
 use crate::card::card_logic;
 
-pub const ALL_CALLBACKS: &'static [Shortcut] = &[
+pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::Quit,
     Shortcut::ReverseCard,
     Shortcut::PrevCard,
