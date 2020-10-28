@@ -6,6 +6,7 @@ use std::path::Path;
 use std::rc::Rc;
 
 use clap::{App, Arg, ArgMatches};
+use cursive::event::Event;
 use log::info;
 use simplelog::{Config, LevelFilter, WriteLogger};
 
@@ -13,10 +14,11 @@ use card::card_logic;
 
 use crate::card::card_data::{CardData, CardSet};
 use crate::card::card_ui;
-use cursive::event::Event;
+use crate::shortcuts::ShortcutData;
 
 mod card;
 mod layout;
+mod shortcuts;
 
 fn main() {
     set_up_logger();
@@ -31,15 +33,10 @@ fn main() {
     info!("Setting up cursive");
     let mut siv = cursive::default();
     siv.set_user_data(card_set.clone());
-    siv.add_global_callback('q', |s| s.quit());
-    siv.add_global_callback(' ', |s| card_logic::reverse_card(s));
-    siv.add_global_callback('n', |s| card_logic::next_card(s));
-    siv.add_global_callback('p', |s| card_logic::prev_card(s));
-    siv.add_global_callback('s', |s| card_logic::toggle_show_pronunciation(s));
-    siv.add_global_callback('d', |s| card_logic::toggle_show_description(s));
-    siv.add_global_callback('e', |s| card_logic::toggle_show_example(s));
-    siv.add_global_callback('t', |s| card_logic::toggle_show_title(s));
-    siv.add_global_callback('z', |s| card_logic::show_essential(s));
+    shortcuts::ALL_CALLBACKS.iter().for_each(|shortcut| {
+        let shortcut = shortcut.clone();
+        siv.add_global_callback(shortcut.event(), move |siv| shortcut.call(siv));
+    });
 
     siv.set_on_pre_event(Event::WindowResize, |s| {
         info!("set_on_pre_event: refresh");
