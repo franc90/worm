@@ -23,5 +23,5 @@ pub fn show_help(siv: &mut Cursive) {
             shortcut.desc()
         )))
     });
-    siv.add_layer(Dialog::around(layout).with_name(HELP_DIALOG));
+    siv.add_layer(Dialog::around(layout.scrollable()).with_name(HELP_DIALOG));
 }
