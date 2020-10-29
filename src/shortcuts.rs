@@ -1,6 +1,6 @@
-use cursive::Cursive;
 use cursive::event::Event;
 use cursive::views::Dialog;
+use cursive::Cursive;
 
 use crate::card::card_logic;
 use crate::help;
@@ -10,11 +10,11 @@ pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::ReverseCard,
     Shortcut::PrevCard,
     Shortcut::NextCard,
-    Shortcut::ToggleShowPronunciation,
-    Shortcut::ToggleShowDescription,
-    Shortcut::ToggleShowExample,
-    Shortcut::ToggleShowTitle,
-    Shortcut::ToggleShowShortcuts,
+    Shortcut::TogglePronunciationVisibility,
+    Shortcut::ToggleDescriptionVisibility,
+    Shortcut::ToggleExampleVisibility,
+    Shortcut::ToggleTitleVisibility,
+    Shortcut::ToggleShortcutsVisibility,
     Shortcut::ToggleZenMode,
     Shortcut::Help,
 ];
@@ -25,11 +25,11 @@ pub enum Shortcut {
     ReverseCard,
     PrevCard,
     NextCard,
-    ToggleShowPronunciation,
-    ToggleShowDescription,
-    ToggleShowExample,
-    ToggleShowTitle,
-    ToggleShowShortcuts,
+    TogglePronunciationVisibility,
+    ToggleDescriptionVisibility,
+    ToggleExampleVisibility,
+    ToggleTitleVisibility,
+    ToggleShortcutsVisibility,
     ToggleZenMode,
     Help,
 }
@@ -62,11 +62,11 @@ impl ShortcutData for Shortcut {
             Shortcut::ReverseCard => Event::Char(' '),
             Shortcut::PrevCard => Event::Char('p'),
             Shortcut::NextCard => Event::Char('n'),
-            Shortcut::ToggleShowPronunciation => Event::Char('s'),
-            Shortcut::ToggleShowDescription => Event::Char('d'),
-            Shortcut::ToggleShowExample => Event::Char('e'),
-            Shortcut::ToggleShowTitle => Event::Char('t'),
-            Shortcut::ToggleShowShortcuts => Event::Char('m'),
+            Shortcut::TogglePronunciationVisibility => Event::Char('s'),
+            Shortcut::ToggleDescriptionVisibility => Event::Char('d'),
+            Shortcut::ToggleExampleVisibility => Event::Char('e'),
+            Shortcut::ToggleTitleVisibility => Event::Char('t'),
+            Shortcut::ToggleShortcutsVisibility => Event::Char('m'),
             Shortcut::ToggleZenMode => Event::Char('z'),
             Shortcut::Help => Event::Char('?'),
         }
@@ -78,11 +78,11 @@ impl ShortcutData for Shortcut {
             Shortcut::ReverseCard => "Reverse card",
             Shortcut::PrevCard => "Previous card",
             Shortcut::NextCard => "Next card",
-            Shortcut::ToggleShowPronunciation => "Toggle show pronunciation",
-            Shortcut::ToggleShowDescription => "Toggle show description",
-            Shortcut::ToggleShowExample => "Toggle show example",
-            Shortcut::ToggleShowTitle => "Toggle show title",
-            Shortcut::ToggleShowShortcuts => "Toggle show shortcuts",
+            Shortcut::TogglePronunciationVisibility => "Show/hide pronunciation",
+            Shortcut::ToggleDescriptionVisibility => "Show/hide description",
+            Shortcut::ToggleExampleVisibility => "Show/hide example",
+            Shortcut::ToggleTitleVisibility => "Show/hide title",
+            Shortcut::ToggleShortcutsVisibility => "Show/hide shortcuts",
             Shortcut::ToggleZenMode => "Toggle zen mode",
             Shortcut::Help => "Show help",
         }
@@ -95,12 +95,12 @@ impl ShortcutData for Shortcut {
             Shortcut::ReverseCard => card_logic::reverse_card(siv),
             Shortcut::PrevCard => card_logic::prev_card(siv),
             Shortcut::NextCard => card_logic::next_card(siv),
-            Shortcut::ToggleShowPronunciation => card_logic::toggle_show_pronunciation(siv),
-            Shortcut::ToggleShowDescription => card_logic::toggle_show_description(siv),
-            Shortcut::ToggleShowExample => card_logic::toggle_show_example(siv),
-            Shortcut::ToggleShowTitle => card_logic::toggle_show_title(siv),
-            Shortcut::ToggleShowShortcuts => card_logic::toggle_show_shortcuts(siv),
-            Shortcut::ToggleZenMode => card_logic::show_essential(siv),
+            Shortcut::TogglePronunciationVisibility => card_logic::toggle_pronunciation(siv),
+            Shortcut::ToggleDescriptionVisibility => card_logic::toggle_description(siv),
+            Shortcut::ToggleExampleVisibility => card_logic::toggle_example(siv),
+            Shortcut::ToggleTitleVisibility => card_logic::toggle_title(siv),
+            Shortcut::ToggleShortcutsVisibility => card_logic::toggle_shortcuts(siv),
+            Shortcut::ToggleZenMode => card_logic::zen_mode(siv),
             Shortcut::Help => help::show_help(siv),
         }
     }

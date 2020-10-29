@@ -19,23 +19,23 @@ pub fn reverse_card(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.reverse_current_card());
 }
 
-pub fn toggle_show_pronunciation(siv: &mut Cursive) {
+pub fn toggle_pronunciation(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_pronunciation());
 }
 
-pub fn toggle_show_description(siv: &mut Cursive) {
+pub fn toggle_description(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_description());
 }
 
-pub fn toggle_show_example(siv: &mut Cursive) {
+pub fn toggle_example(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_example());
 }
 
-pub fn toggle_show_title(siv: &mut Cursive) {
+pub fn toggle_title(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_title());
 }
 
-pub fn toggle_show_shortcuts(siv: &mut Cursive) {
+pub fn toggle_shortcuts(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_shortcuts());
 }
 
