@@ -18,6 +18,7 @@ pub struct CardSet {
     show_example: bool,
     show_title: bool,
     show_shortcuts: bool,
+    zen_mode: bool,
 }
 
 impl CardSet {
@@ -32,6 +33,7 @@ impl CardSet {
             show_example: false,
             show_title: true,
             show_shortcuts: true,
+            zen_mode: false,
         }
     }
 
@@ -40,31 +42,43 @@ impl CardSet {
     }
 
     pub fn toggle_show_pronunciation(&mut self) {
+        self.exit_zen_mode_and_turn_all_off();
         self.show_pronunciation = !self.show_pronunciation;
     }
 
     pub fn toggle_show_description(&mut self) {
+        self.exit_zen_mode_and_turn_all_off();
         self.show_description = !self.show_description;
     }
 
     pub fn toggle_show_example(&mut self) {
+        self.exit_zen_mode_and_turn_all_off();
         self.show_example = !self.show_example;
     }
 
     pub fn toggle_show_title(&mut self) {
+        self.exit_zen_mode_and_turn_all_off();
         self.show_title = !self.show_title;
     }
 
     pub fn toggle_show_shortcuts(&mut self) {
+        self.exit_zen_mode_and_turn_all_off();
         self.show_shortcuts = !self.show_shortcuts;
     }
 
-    pub fn show_essential(&mut self) {
-        self.show_pronunciation = false;
-        self.show_description = false;
-        self.show_example = false;
-        self.show_title = false;
-        self.show_shortcuts = false;
+    fn exit_zen_mode_and_turn_all_off(&mut self) {
+        if self.zen_mode {
+            self.show_pronunciation = false;
+            self.show_description = false;
+            self.show_example = false;
+            self.show_title = false;
+            self.show_shortcuts = false;
+            self.zen_mode = false;
+        }
+    }
+
+    pub fn toggle_zen_mode(&mut self) {
+        self.zen_mode = !self.zen_mode
     }
 
     pub fn get_main_text(&self) -> &str {
@@ -77,7 +91,7 @@ impl CardSet {
     }
 
     pub fn get_title(&self) -> Option<&str> {
-        if self.show_title {
+        if self.show_title && !self.zen_mode {
             Some(&self.name)
         } else {
             None
@@ -85,7 +99,7 @@ impl CardSet {
     }
 
     pub fn get_shortcuts(&self) -> Option<&str> {
-        if self.show_shortcuts {
+        if self.show_shortcuts && !self.zen_mode {
             Some("  q (quit) | ? (help)  ")
         } else {
             None
@@ -94,7 +108,7 @@ impl CardSet {
 
     pub fn get_pronunciation(&self) -> Option<&str> {
         let card = self.get_current_card().unwrap();
-        if self.show_pronunciation && !self.reversed {
+        if self.show_pronunciation && !self.zen_mode && !self.reversed {
             Some(&card.pronunciation)
         } else {
             None
@@ -103,7 +117,7 @@ impl CardSet {
 
     pub fn get_desc(&self) -> Option<&str> {
         let card = self.get_current_card().unwrap();
-        if self.show_description && !self.reversed {
+        if self.show_description && !self.zen_mode && !self.reversed {
             Some(&card.explanation)
         } else {
             None
@@ -112,7 +126,7 @@ impl CardSet {
 
     pub fn get_example(&self) -> Option<&str> {
         let card = self.get_current_card().unwrap();
-        if self.show_example && !self.reversed {
+        if self.show_example && !self.zen_mode && !self.reversed {
             Some(&card.sentence)
         } else {
             None

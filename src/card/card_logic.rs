@@ -39,8 +39,8 @@ pub fn toggle_shortcuts(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_shortcuts());
 }
 
-pub fn show_essential(siv: &mut Cursive) {
-    update_card_set(siv, |card_set| card_set.show_essential());
+pub fn toggle_zen_mode(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_zen_mode());
 }
 
 pub fn refresh(siv: &mut Cursive) {

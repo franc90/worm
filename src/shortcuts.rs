@@ -100,7 +100,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleExampleVisibility => card_logic::toggle_example(siv),
             Shortcut::ToggleTitleVisibility => card_logic::toggle_title(siv),
             Shortcut::ToggleShortcutsVisibility => card_logic::toggle_shortcuts(siv),
-            Shortcut::ToggleZenMode => card_logic::zen_mode(siv),
+            Shortcut::ToggleZenMode => card_logic::toggle_zen_mode(siv),
             Shortcut::Help => help::show_help(siv),
         }
     }
