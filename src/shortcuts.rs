@@ -1,7 +1,9 @@
 use cursive::Cursive;
 use cursive::event::Event;
+use cursive::views::Dialog;
 
 use crate::card::card_logic;
+use crate::help;
 
 pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::Quit,
@@ -13,6 +15,7 @@ pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::ToggleShowExample,
     Shortcut::ToggleShowTitle,
     Shortcut::ToggleZenMode,
+    Shortcut::Help,
 ];
 
 #[derive(Copy, Clone)]
@@ -26,6 +29,22 @@ pub enum Shortcut {
     ToggleShowExample,
     ToggleShowTitle,
     ToggleZenMode,
+    Help,
+}
+pub trait DisplayEventInHelp {
+    fn help_text(&self) -> String;
+}
+
+impl DisplayEventInHelp for Event {
+    fn help_text(&self) -> String {
+        match self {
+            Event::Char(' ') => "space".to_string(),
+            Event::Char(c) => format!("{}", c),
+            Event::AltChar(c) => format!("alt+{}", c),
+            Event::CtrlChar(c) => format!("ctrl+{}", c),
+            e => panic!("Cannot format {:?} for display in help", e),
+        }
+    }
 }
 
 pub trait ShortcutData {
@@ -46,12 +65,13 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowExample => Event::Char('e'),
             Shortcut::ToggleShowTitle => Event::Char('t'),
             Shortcut::ToggleZenMode => Event::Char('z'),
+            Shortcut::Help => Event::Char('?'),
         }
     }
 
     fn desc(&self) -> String {
         match self {
-            Shortcut::Quit => "Quit",
+            Shortcut::Quit => "Quit app or close popup",
             Shortcut::ReverseCard => "Reverse card",
             Shortcut::PrevCard => "Previous card",
             Shortcut::NextCard => "Next card",
@@ -60,13 +80,14 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowExample => "Toggle show example",
             Shortcut::ToggleShowTitle => "Toggle show title",
             Shortcut::ToggleZenMode => "Toggle zen mode",
+            Shortcut::Help => "Show help",
         }
         .to_string()
     }
 
     fn call(&self, siv: &mut Cursive) {
         match self {
-            Shortcut::Quit => siv.quit(),
+            Shortcut::Quit => back_or_quit(siv),
             Shortcut::ReverseCard => card_logic::reverse_card(siv),
             Shortcut::PrevCard => card_logic::prev_card(siv),
             Shortcut::NextCard => card_logic::next_card(siv),
@@ -75,6 +96,16 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowExample => card_logic::toggle_show_example(siv),
             Shortcut::ToggleShowTitle => card_logic::toggle_show_title(siv),
             Shortcut::ToggleZenMode => card_logic::show_essential(siv),
+            Shortcut::Help => help::show_help(siv),
         }
     }
+}
+
+fn back_or_quit(siv: &mut Cursive) {
+    match siv.find_name::<Dialog>(help::HELP_DIALOG) {
+        None => siv.quit(),
+        Some(_) => {
+            siv.pop_layer();
+        }
+    };
 }

@@ -17,6 +17,7 @@ use crate::card::card_ui;
 use crate::shortcuts::ShortcutData;
 
 mod card;
+mod help;
 mod layout;
 mod shortcuts;
 

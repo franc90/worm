@@ -8,7 +8,7 @@ pub const MAIN_LAYOUT_NAME: &str = "main_layout";
 pub fn generate_main_layout() -> ResizedView<NamedView<LinearLayout>>{
     LinearLayout::vertical()
         .child(
-            TextView::new("  q: quit | n: next | p: prev | space: turn card  ")
+            TextView::new("  q (quit) | ? (help)  ")
                 .h_align(HAlign::Right)
                 .fixed_height(2),
         )
