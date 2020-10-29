@@ -42,18 +42,24 @@ impl CardSet {
     }
 
     pub fn toggle_show_pronunciation(&mut self) {
-        self.exit_zen_mode_and_turn_all_off();
-        self.show_pronunciation = !self.show_pronunciation;
+        if !self.reversed {
+            self.exit_zen_mode_and_turn_all_off();
+            self.show_pronunciation = !self.show_pronunciation;
+        }
     }
 
     pub fn toggle_show_description(&mut self) {
-        self.exit_zen_mode_and_turn_all_off();
-        self.show_description = !self.show_description;
+        if !self.reversed {
+            self.exit_zen_mode_and_turn_all_off();
+            self.show_description = !self.show_description;
+        }
     }
 
     pub fn toggle_show_example(&mut self) {
-        self.exit_zen_mode_and_turn_all_off();
-        self.show_example = !self.show_example;
+        if !self.reversed {
+            self.exit_zen_mode_and_turn_all_off();
+            self.show_example = !self.show_example;
+        }
     }
 
     pub fn toggle_show_title(&mut self) {
