@@ -18,7 +18,6 @@ use crate::shortcuts::ShortcutData;
 
 mod card;
 mod help;
-mod layout;
 mod shortcuts;
 
 fn main() {
@@ -46,7 +45,6 @@ fn main() {
 
     siv.update_theme(|f| f.shadow = false);
 
-    siv.add_fullscreen_layer(layout::generate_main_layout());
     card_ui::generate_card_view(&mut siv, &card_set.borrow());
 
     info!("Started");

@@ -1,3 +1,4 @@
+use cursive::align::HAlign;
 use cursive::align::VAlign;
 use cursive::Cursive;
 use cursive::theme::Effect;
@@ -6,7 +7,6 @@ use cursive::view::SizeConstraint;
 use cursive::views::{LinearLayout, TextView};
 
 use crate::card::card_data::CardSet;
-use crate::layout::MAIN_LAYOUT_NAME;
 
 const CARD_LAYOUT_NAME: &str = "card_layout";
 const MAIN_ROW: &str = "main_row";
@@ -14,16 +14,15 @@ const ROW_2: &str = "row_2";
 const ROW_3: &str = "row_3";
 const ROW_4: &str = "row_4";
 const TITLE: &str = "title";
+const SHORTCUTS: &str = "shortcuts";
 
 pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
-    if let Some(ref mut main_view) = siv.find_name::<LinearLayout>(MAIN_LAYOUT_NAME) {
-        main_view.insert_child(
-            0,
-            compose_card_layout()
-                .with_name(CARD_LAYOUT_NAME)
-                .resized(SizeConstraint::Full, SizeConstraint::Full),
-        );
-    }
+    siv.add_fullscreen_layer(
+        compose_card_layout()
+            .with_name(CARD_LAYOUT_NAME)
+            .resized(SizeConstraint::Full, SizeConstraint::Full),
+    );
+
     update_card_view(siv, card_set);
 }
 
@@ -49,6 +48,9 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     });
     set_optional_row(siv, ROW_4, card_set.get_example(), |example| {
         format!(" Example:     {}", example)
+    });
+    set_optional_row(siv, SHORTCUTS, card_set.get_shortcuts(), |shortcuts| {
+        shortcuts.to_string()
     });
     set_optional_row(siv, TITLE, card_set.get_title(), |name| {
         format!(
@@ -79,6 +81,12 @@ fn compose_card_layout() -> LinearLayout {
                 .child(TextView::new(" ").with_name(ROW_3).max_height(4))
                 .child(TextView::new(" ").max_height(1))
                 .child(TextView::new(" ").with_name(ROW_4).max_height(4))
-                .child(TextView::new(" ").max_height(1)),
+                .child(TextView::new(" ").max_height(1))
+                .child(
+                    TextView::new(" ")
+                        .h_align(HAlign::Right)
+                        .with_name(SHORTCUTS)
+                        .fixed_height(2),
+                ),
         )
 }

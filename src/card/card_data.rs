@@ -17,6 +17,7 @@ pub struct CardSet {
     show_description: bool,
     show_example: bool,
     show_title: bool,
+    show_shortcuts: bool,
 }
 
 impl CardSet {
@@ -30,6 +31,7 @@ impl CardSet {
             show_description: false,
             show_example: false,
             show_title: true,
+            show_shortcuts: true,
         }
     }
 
@@ -53,11 +55,16 @@ impl CardSet {
         self.show_title = !self.show_title;
     }
 
+    pub fn toggle_show_shortcuts(&mut self) {
+        self.show_shortcuts = !self.show_shortcuts;
+    }
+
     pub fn show_essential(&mut self) {
         self.show_pronunciation = false;
         self.show_description = false;
         self.show_example = false;
         self.show_title = false;
+        self.show_shortcuts = false;
     }
 
     pub fn get_main_text(&self) -> &str {
@@ -72,6 +79,14 @@ impl CardSet {
     pub fn get_title(&self) -> Option<&str> {
         if self.show_title {
             Some(&self.name)
+        } else {
+            None
+        }
+    }
+
+    pub fn get_shortcuts(&self) -> Option<&str> {
+        if self.show_shortcuts {
+            Some("  q (quit) | ? (help)  ")
         } else {
             None
         }

@@ -14,6 +14,7 @@ pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::ToggleShowDescription,
     Shortcut::ToggleShowExample,
     Shortcut::ToggleShowTitle,
+    Shortcut::ToggleShowShortcuts,
     Shortcut::ToggleZenMode,
     Shortcut::Help,
 ];
@@ -28,6 +29,7 @@ pub enum Shortcut {
     ToggleShowDescription,
     ToggleShowExample,
     ToggleShowTitle,
+    ToggleShowShortcuts,
     ToggleZenMode,
     Help,
 }
@@ -64,6 +66,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowDescription => Event::Char('d'),
             Shortcut::ToggleShowExample => Event::Char('e'),
             Shortcut::ToggleShowTitle => Event::Char('t'),
+            Shortcut::ToggleShowShortcuts => Event::Char('m'),
             Shortcut::ToggleZenMode => Event::Char('z'),
             Shortcut::Help => Event::Char('?'),
         }
@@ -79,6 +82,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowDescription => "Toggle show description",
             Shortcut::ToggleShowExample => "Toggle show example",
             Shortcut::ToggleShowTitle => "Toggle show title",
+            Shortcut::ToggleShowShortcuts => "Toggle show shortcuts",
             Shortcut::ToggleZenMode => "Toggle zen mode",
             Shortcut::Help => "Show help",
         }
@@ -95,6 +99,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleShowDescription => card_logic::toggle_show_description(siv),
             Shortcut::ToggleShowExample => card_logic::toggle_show_example(siv),
             Shortcut::ToggleShowTitle => card_logic::toggle_show_title(siv),
+            Shortcut::ToggleShowShortcuts => card_logic::toggle_show_shortcuts(siv),
             Shortcut::ToggleZenMode => card_logic::show_essential(siv),
             Shortcut::Help => help::show_help(siv),
         }
