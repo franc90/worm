@@ -52,7 +52,7 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
     });
     set_optional_row(siv, TITLE, card_set.get_title(), |name| {
         format!(
-            " {}: {}/{}",
+            "\n  {}: {}/{}",
             name,
             card_set.current_card + 1,
             card_set.cards_len()
@@ -62,7 +62,7 @@ pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
 
 fn compose_card_layout() -> LinearLayout {
     LinearLayout::vertical()
-        .child(TextView::new("").with_name(TITLE).fixed_height(1))
+        .child(TextView::new("").with_name(TITLE).fixed_height(2))
         .child(
             TextView::new("")
                 .center()
