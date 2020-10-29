@@ -1,4 +1,6 @@
-#[derive(serde::Serialize, serde::Deserialize, Debug)]
+use crate::card::card_ui::SHORTCUTS_TEXT;
+
+#[derive(serde::Serialize, serde::Deserialize, Debug, PartialOrd, PartialEq)]
 pub struct CardData {
     pub word: String,
     pub translated: String,
@@ -106,7 +108,7 @@ impl CardSet {
 
     pub fn get_shortcuts(&self) -> Option<&str> {
         if self.show_shortcuts && !self.zen_mode {
-            Some("  q (quit) | ? (help)  ")
+            Some(SHORTCUTS_TEXT)
         } else {
             None
         }
@@ -161,5 +163,417 @@ impl CardSet {
         } else {
             self.current_card
         };
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn card_set(title: &str) -> CardSet {
+        CardSet::new(title, vec![gen_card_data(0), gen_card_data(1)])
+    }
+
+    #[test]
+    fn show_title_by_default() {
+        let set = card_set("set with title");
+
+        assert_eq!(true, set.show_title);
+        assert_eq!(Some("set with title"), set.get_title());
+    }
+
+    #[test]
+    fn show_no_title_when_disabled() {
+        let mut set = card_set("set with title");
+        assert_eq!(true, set.show_title);
+
+        set.toggle_show_title();
+
+        assert_eq!(None, set.get_title());
+    }
+
+    #[test]
+    fn show_shortcuts_by_default() {
+        let set = card_set("new set");
+
+        assert_eq!(true, set.show_shortcuts);
+        assert_eq!(Some(SHORTCUTS_TEXT), set.get_shortcuts());
+    }
+
+    #[test]
+    fn show_no_shortcuts_when_disabled() {
+        let mut set = card_set("new set");
+        assert_eq!(true, set.show_shortcuts);
+
+        set.toggle_show_shortcuts();
+
+        assert_eq!(None, set.get_shortcuts());
+    }
+
+    #[test]
+    fn show_no_shortcuts_when_in_zen() {
+        let mut set = card_set("new set");
+        assert_eq!(true, set.show_shortcuts);
+
+        set.toggle_zen_mode();
+
+        assert_eq!(None, set.get_shortcuts());
+    }
+
+    #[test]
+    fn show_pronunciation_by_default() {
+        let set = card_set("new set");
+
+        assert_eq!(true, set.show_pronunciation);
+        assert_eq!(Some("pronunciation0"), set.get_pronunciation());
+    }
+
+    #[test]
+    fn show_no_pronunciation_when_disabled() {
+        let mut set = card_set("new set");
+        assert_eq!(true, set.show_pronunciation);
+
+        set.toggle_show_pronunciation();
+
+        assert_eq!(None, set.get_pronunciation());
+    }
+
+    #[test]
+    fn show_no_pronunciation_when_in_zen() {
+        let mut set = card_set("new set");
+        assert_eq!(true, set.show_pronunciation);
+
+        set.toggle_zen_mode();
+
+        assert_eq!(None, set.get_pronunciation());
+    }
+
+    #[test]
+    fn show_no_pronunciation_when_reversed() {
+        let mut set = card_set("new set");
+        assert_eq!(true, set.show_pronunciation);
+
+        set.toggle_zen_mode();
+
+        assert_eq!(None, set.get_pronunciation());
+    }
+
+    #[test]
+    fn show_no_term_description_by_default() {
+        let set = card_set("new set");
+
+        assert_eq!(false, set.show_description);
+        assert_eq!(false, set.zen_mode);
+        assert_eq!(false, set.reversed);
+        assert_eq!(None, set.get_desc());
+    }
+
+    #[test]
+    fn show_term_description_when_enabled() {
+        let mut set = card_set("new set");
+        set.show_description = true;
+        set.zen_mode = false;
+        set.reversed = false;
+
+        assert_eq!(Some("explanation0"), set.get_desc());
+    }
+
+    #[test]
+    fn show_no_term_description_when_in_zen() {
+        let mut set = card_set("new set");
+        set.show_description = true;
+        set.zen_mode = true;
+        set.reversed = false;
+
+        assert_eq!(None, set.get_desc());
+    }
+
+    #[test]
+    fn show_no_term_description_when_reversed() {
+        let mut set = card_set("new set");
+        set.show_description = true;
+        set.zen_mode = false;
+        set.reversed = true;
+
+        assert_eq!(None, set.get_desc());
+    }
+
+    #[test]
+    fn show_no_example_by_default() {
+        let set = card_set("new set");
+
+        assert_eq!(false, set.show_example);
+        assert_eq!(false, set.zen_mode);
+        assert_eq!(false, set.reversed);
+        assert_eq!(None, set.get_example());
+    }
+
+    #[test]
+    fn show_example_when_enabled() {
+        let mut set = card_set("new set");
+        set.show_example = true;
+        set.zen_mode = false;
+        set.reversed = false;
+
+        assert_eq!(Some("sentence0"), set.get_example());
+    }
+
+    #[test]
+    fn show_no_example_when_in_zen() {
+        let mut set = card_set("new set");
+        set.show_example = true;
+        set.zen_mode = true;
+        set.reversed = false;
+
+        assert_eq!(None, set.get_example());
+    }
+
+    #[test]
+    fn show_no_example_when_reversed() {
+        let mut set = card_set("new set");
+        set.show_example = true;
+        set.zen_mode = false;
+        set.reversed = true;
+
+        assert_eq!(None, set.get_example());
+    }
+
+    #[test]
+    fn prev_goes_to_prev_card() {
+        let mut set = card_set("new set");
+        set.current_card = 1;
+        assert_eq!(1, set.current_card);
+
+        set.prev_card();
+
+        assert_eq!(0, set.current_card);
+    }
+
+    #[test]
+    fn cant_prev_when_on_first_card() {
+        let mut set = card_set("new set");
+        assert_eq!(0, set.current_card);
+        set.prev_card();
+        assert_eq!(0, set.current_card);
+    }
+
+    #[test]
+    fn next_goes_to_next_card() {
+        let mut set = card_set("new set");
+        assert_eq!(0, set.current_card);
+
+        set.next_card();
+
+        assert_eq!(1, set.current_card);
+    }
+
+    #[test]
+    fn cant_next_when_on_last_card() {
+        let mut set = card_set("new set");
+        set.current_card = set.cards.len() - 1;
+        assert_eq!(1, set.current_card);
+
+        set.next_card();
+
+        assert_eq!(1, set.current_card);
+    }
+
+    #[test]
+    fn going_zen_doesnt_change_other_settings_but_displays_only_essential() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // go back to previous mode
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_visible(&set);
+    }
+
+    #[test]
+    fn when_in_zen_mode_showing_example_exits_zen_and_overrides_other_settings() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // turn zen off and show only example
+        set.toggle_show_example();
+        assert!(set.get_example().is_some());
+        assert!(set.get_desc().is_none());
+        assert!(set.get_title().is_none());
+        assert!(set.get_pronunciation().is_none());
+        assert!(set.get_shortcuts().is_none());
+    }
+
+    #[test]
+    fn when_in_zen_mode_showing_description_exits_zen_and_overrides_other_settings() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // turn zen off and show only desc
+        set.toggle_show_description();
+        assert!(!set.zen_mode);
+        assert!(set.get_example().is_none());
+        assert!(set.get_desc().is_some());
+        assert!(set.get_title().is_none());
+        assert!(set.get_pronunciation().is_none());
+        assert!(set.get_shortcuts().is_none());
+    }
+
+    #[test]
+    fn when_in_zen_mode_showing_title_exits_zen_and_overrides_other_settings() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // turn zen off and show only title
+        set.toggle_show_title();
+        assert!(!set.zen_mode);
+        assert!(set.get_example().is_none());
+        assert!(set.get_desc().is_none());
+        assert!(set.get_title().is_some());
+        assert!(set.get_pronunciation().is_none());
+        assert!(set.get_shortcuts().is_none());
+    }
+
+    #[test]
+    fn when_in_zen_mode_showing_pronunciation_exits_zen_and_overrides_other_settings() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // turn zen off and show only pronunciation
+        set.toggle_show_pronunciation();
+        assert!(!set.zen_mode);
+        assert!(set.get_example().is_none());
+        assert!(set.get_desc().is_none());
+        assert!(set.get_title().is_none());
+        assert!(set.get_pronunciation().is_some());
+        assert!(set.get_shortcuts().is_none());
+    }
+
+    #[test]
+    fn when_in_zen_mode_showing_shortcuts_exits_zen_and_overrides_other_settings() {
+        let mut set = card_set("new set");
+        show_everything(&mut set);
+
+        // make sure everything is visible
+        set.zen_mode = false;
+        assert_all_optional_views_are_visible(&set);
+
+        // turn zen mode on
+        set.toggle_zen_mode();
+        assert_all_optional_views_are_hidden(&set);
+
+        // turn zen off and show only shortcuts
+        set.toggle_show_shortcuts();
+        assert!(!set.zen_mode);
+        assert!(set.get_example().is_none());
+        assert!(set.get_desc().is_none());
+        assert!(set.get_title().is_none());
+        assert!(set.get_pronunciation().is_none());
+        assert!(set.get_shortcuts().is_some());
+    }
+
+    #[test]
+    fn if_reversed_dont_toggle_pronunciation() {
+        let mut set = card_set("new set");
+        set.show_pronunciation = true;
+        set.reversed = true;
+
+        set.toggle_show_pronunciation();
+
+        assert_eq!(true, set.show_pronunciation)
+    }
+
+    #[test]
+    fn if_reversed_dont_toggle_description() {
+        let mut set = card_set("new set");
+        set.show_description = true;
+        set.reversed = true;
+
+        set.toggle_show_description();
+
+        assert_eq!(true, set.show_description)
+    }
+
+    #[test]
+    fn if_reversed_dont_toggle_example() {
+        let mut set = card_set("new set");
+        set.show_example = true;
+        set.reversed = true;
+
+        set.toggle_show_example();
+
+        assert_eq!(true, set.show_example)
+    }
+
+    fn gen_card_data(nr: i8) -> CardData {
+        CardData {
+            word: format!("word{}", nr),
+            translated: format!("translated{}", nr),
+            explanation: format!("explanation{}", nr),
+            pronunciation: format!("pronunciation{}", nr),
+            sentence: format!("sentence{}", nr),
+        }
+    }
+
+    fn show_everything(set: &mut CardSet) {
+        set.show_example = true;
+        set.show_description = true;
+        set.show_title = true;
+        set.show_shortcuts = true;
+        set.show_pronunciation = true;
+    }
+
+    fn assert_all_optional_views_are_visible(set: &CardSet) {
+        assert!(set.get_example().is_some());
+        assert!(set.get_desc().is_some());
+        assert!(set.get_title().is_some());
+        assert!(set.get_pronunciation().is_some());
+        assert!(set.get_shortcuts().is_some());
+    }
+
+    fn assert_all_optional_views_are_hidden(set: &CardSet) {
+        assert!(set.get_example().is_none());
+        assert!(set.get_desc().is_none());
+        assert!(set.get_title().is_none());
+        assert!(set.get_pronunciation().is_none());
+        assert!(set.get_shortcuts().is_none());
     }
 }

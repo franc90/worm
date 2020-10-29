@@ -15,6 +15,7 @@ const ROW_3: &str = "row_3";
 const ROW_4: &str = "row_4";
 const TITLE: &str = "title";
 const SHORTCUTS: &str = "shortcuts";
+pub const SHORTCUTS_TEXT: &str = "  q (quit) | ? (help)  ";
 
 pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
     siv.add_fullscreen_layer(
