@@ -66,36 +66,36 @@ impl CardSet {
 
     pub fn toggle_show_pronunciation(&mut self) {
         if !self.reversed {
-            self.exit_zen_mode_and_turn_all_off();
+            self.exit_zen_mode_and_turn_optional_elems_off();
             self.show_pronunciation = !self.show_pronunciation;
         }
     }
 
     pub fn toggle_show_description(&mut self) {
         if !self.reversed {
-            self.exit_zen_mode_and_turn_all_off();
+            self.exit_zen_mode_and_turn_optional_elems_off();
             self.show_description = !self.show_description;
         }
     }
 
     pub fn toggle_show_example(&mut self) {
         if !self.reversed {
-            self.exit_zen_mode_and_turn_all_off();
+            self.exit_zen_mode_and_turn_optional_elems_off();
             self.show_example = !self.show_example;
         }
     }
 
     pub fn toggle_show_title(&mut self) {
-        self.exit_zen_mode_and_turn_all_off();
+        self.exit_zen_mode_and_turn_optional_elems_off();
         self.show_title = !self.show_title;
     }
 
     pub fn toggle_show_shortcuts(&mut self) {
-        self.exit_zen_mode_and_turn_all_off();
+        self.exit_zen_mode_and_turn_optional_elems_off();
         self.show_shortcuts = !self.show_shortcuts;
     }
 
-    fn exit_zen_mode_and_turn_all_off(&mut self) {
+    fn exit_zen_mode_and_turn_optional_elems_off(&mut self) {
         if self.zen_mode {
             self.show_pronunciation = false;
             self.show_description = false;
