@@ -9,9 +9,9 @@ use cursive::views::{Layer, LinearLayout, ResizedView, TextView};
 use crate::card::card_data::CardSet;
 
 const CARD_LAYOUT_NAME: &str = "card_layout";
-pub const SHORTCUTS_TEXT: &str = "| q (quit) | ? (help) ";
-pub const DESCRIPTION_PREFIX: &str = "Description: ";
-pub const EXAMPLE_PREFIX: &str = "Example: ";
+const SHORTCUTS_TEXT: &str = "| q (quit) | ? (help) ";
+const DESCRIPTION_PREFIX: &str = "Description: ";
+const EXAMPLE_PREFIX: &str = "Example: ";
 
 pub fn display(siv: &mut Cursive, card_set: &CardSet) {
     if let Some(_) = siv.find_name::<LinearLayout>(CARD_LAYOUT_NAME) {
@@ -47,11 +47,11 @@ pub fn display(siv: &mut Cursive, card_set: &CardSet) {
     layout.add_child(TextView::new(" ").resized(SizeConstraint::Full, SizeConstraint::Full));
 
     card_set.get_desc().iter().for_each(|desc| {
-        layout.add_child(TextView::new(format!(" Description: {}", *desc)).max_height(2))
+        layout.add_child(TextView::new(format!("{}{}", DESCRIPTION_PREFIX, *desc)).max_height(2))
     });
 
     card_set.get_example().iter().for_each(|example| {
-        layout.add_child(TextView::new(format!(" Example: {}", *example)).max_height(2))
+        layout.add_child(TextView::new(format!("{}{}", EXAMPLE_PREFIX, *example)).max_height(2))
     });
 
     if weight < 0 {
