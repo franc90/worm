@@ -39,6 +39,27 @@ impl CardSet {
         }
     }
 
+    pub fn count_view_weight(&self, x: usize, desc_prefix: usize, example_prefix: usize) -> i32 {
+        fn multirow_with_prefix(item: &Option<&str>, x: usize, prefix_len: usize) -> i32 {
+            *item
+                .map(|text| prefix_len + (*text).len())
+                .map(|text_size| if text_size <= x { 1 } else { 2 })
+                .get_or_insert(0)
+        }
+        let mut weight = 0;
+        if self.show_title {
+            weight -= 1;
+        }
+        if self.show_shortcuts {
+            weight += 1;
+        }
+
+        weight += multirow_with_prefix(&self.get_desc(), x, desc_prefix);
+        weight += multirow_with_prefix(&self.get_example(), x, example_prefix);
+
+        weight
+    }
+
     pub fn cards_len(&self) -> usize {
         self.cards.len()
     }
@@ -342,7 +363,6 @@ mod tests {
     fn prev_goes_to_prev_card() {
         let mut set = card_set("new set");
         set.current_card = 1;
-        assert_eq!(1, set.current_card);
 
         set.prev_card();
 
@@ -353,7 +373,9 @@ mod tests {
     fn cant_prev_when_on_first_card() {
         let mut set = card_set("new set");
         assert_eq!(0, set.current_card);
+
         set.prev_card();
+
         assert_eq!(0, set.current_card);
     }
 
@@ -371,11 +393,10 @@ mod tests {
     fn cant_next_when_on_last_card() {
         let mut set = card_set("new set");
         set.current_card = set.cards.len() - 1;
-        assert_eq!(1, set.current_card);
 
         set.next_card();
 
-        assert_eq!(1, set.current_card);
+        assert_eq!(set.cards.len() - 1, set.current_card);
     }
 
     #[test]
@@ -543,6 +564,78 @@ mod tests {
         assert_eq!(true, set.show_example)
     }
 
+    #[test]
+    fn title_tilts_weight_top() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_title = true;
+
+        assert_eq!(
+            -1,
+            set.count_view_weight(usize::max_value(), usize::max_value(), usize::max_value())
+        );
+    }
+
+    #[test]
+    fn shortcuts_tilts_weight_bottom() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_shortcuts = true;
+
+        assert_eq!(
+            1,
+            set.count_view_weight(usize::max_value(), usize::max_value(), usize::max_value())
+        );
+    }
+
+    #[test]
+    fn desc_tilts_weight_bottom() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_description = true;
+
+        assert_eq!(
+            1,
+            set.count_view_weight(usize::max_value(), 0, usize::max_value())
+        );
+    }
+
+    #[test]
+    fn desc_with_prefix_more_than_x_tilts_weight_bottom_by_2() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_description = true;
+
+        assert_eq!(
+            2,
+            set.count_view_weight(10, 10, usize::max_value())
+        );
+    }
+
+    #[test]
+    fn example_tilts_weight_bottom() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_example = true;
+
+        assert_eq!(
+            1,
+            set.count_view_weight(usize::max_value(), usize::max_value(), 0)
+        );
+    }
+
+    #[test]
+    fn example_with_prefix_more_than_x_tilts_weight_bottom_by_2() {
+        let mut set = card_set("test set");
+        hide_everything(&mut set);
+        set.show_example = true;
+
+        assert_eq!(
+            2,
+            set.count_view_weight(10, usize::max_value(), 10)
+        );
+    }
+
     fn gen_card_data(nr: i8) -> CardData {
         CardData {
             word: format!("word{}", nr),
@@ -559,6 +652,14 @@ mod tests {
         set.show_title = true;
         set.show_shortcuts = true;
         set.show_pronunciation = true;
+    }
+
+    fn hide_everything(set: &mut CardSet) {
+        set.show_example = false;
+        set.show_description = false;
+        set.show_title = false;
+        set.show_shortcuts = false;
+        set.show_pronunciation = false;
     }
 
     fn assert_all_optional_views_are_visible(set: &CardSet) {

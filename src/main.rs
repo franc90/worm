@@ -45,7 +45,7 @@ fn main() {
 
     siv.update_theme(|f| f.shadow = false);
 
-    card_ui::generate_card_view(&mut siv, &card_set.borrow());
+    card_ui::display(&mut siv, &card_set.borrow());
 
     info!("Started");
     siv.run();

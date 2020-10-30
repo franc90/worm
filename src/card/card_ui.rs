@@ -1,93 +1,90 @@
 use cursive::align::HAlign;
 use cursive::align::VAlign;
 use cursive::Cursive;
-use cursive::theme::Effect;
+use cursive::theme::{ColorStyle, ColorType, Effect, PaletteColor};
 use cursive::traits::*;
 use cursive::view::SizeConstraint;
-use cursive::views::{LinearLayout, TextView};
+use cursive::views::{Layer, LinearLayout, ResizedView, TextView};
 
 use crate::card::card_data::CardSet;
 
 const CARD_LAYOUT_NAME: &str = "card_layout";
-const MAIN_ROW: &str = "main_row";
-const ROW_2: &str = "row_2";
-const ROW_3: &str = "row_3";
-const ROW_4: &str = "row_4";
-const TITLE: &str = "title";
-const SHORTCUTS: &str = "shortcuts";
-pub const SHORTCUTS_TEXT: &str = "  q (quit) | ? (help)  ";
+pub const SHORTCUTS_TEXT: &str = "| q (quit) | ? (help) ";
+pub const DESCRIPTION_PREFIX: &str = "Description: ";
+pub const EXAMPLE_PREFIX: &str = "Example: ";
 
-pub fn generate_card_view(siv: &mut Cursive, card_set: &CardSet) {
+pub fn display(siv: &mut Cursive, card_set: &CardSet) {
+    if let Some(_) = siv.find_name::<LinearLayout>(CARD_LAYOUT_NAME) {
+        siv.pop_layer();
+    }
+    let mut layout = LinearLayout::vertical();
+
+    card_set.get_title().iter().for_each(|title| {
+        layout.add_child(reverse_color_row(TextView::new(format!(
+            "{}: {}/{}",
+            *title,
+            card_set.current_card + 1,
+            card_set.cards_len()
+        ))));
+    });
+
+    let weight = card_set.count_view_weight(
+        siv.screen_size().x,
+        DESCRIPTION_PREFIX.len(),
+        EXAMPLE_PREFIX.len(),
+    );
+
+    if weight > 0 {
+        layout.add_child(TextView::new(" ").fixed_height(weight as usize));
+    }
+
+    layout.add_child(create_term_row(card_set.get_main_text()));
+    card_set.get_pronunciation().iter().for_each(|pron| {
+        layout.add_child(TextView::new(" ").fixed_height(1));
+        layout.add_child(TextView::new(*pron).center().fixed_height(1));
+    });
+
+    layout.add_child(TextView::new(" ").resized(SizeConstraint::Full, SizeConstraint::Full));
+
+    card_set.get_desc().iter().for_each(|desc| {
+        layout.add_child(TextView::new(format!(" Description: {}", *desc)).max_height(2))
+    });
+
+    card_set.get_example().iter().for_each(|example| {
+        layout.add_child(TextView::new(format!(" Example: {}", *example)).max_height(2))
+    });
+
+    if weight < 0 {
+        layout.add_child(TextView::new(" ").fixed_height(-weight as usize));
+    }
+
+    card_set.get_shortcuts().iter().for_each(|shortcuts| {
+        layout.add_child(reverse_color_row(
+            TextView::new(*shortcuts).h_align(HAlign::Right),
+        ))
+    });
+
     siv.add_fullscreen_layer(
-        compose_card_layout()
+        layout
             .with_name(CARD_LAYOUT_NAME)
             .resized(SizeConstraint::Full, SizeConstraint::Full),
     );
-
-    update_card_view(siv, card_set);
 }
 
-pub fn update_card_view(siv: &mut Cursive, card_set: &CardSet) {
-    fn set_optional_row<T>(siv: &mut Cursive, row_name: &str, text: Option<&str>, transform: T)
-    where
-        T: FnOnce(&str) -> String,
-    {
-        if let Some(ref mut row) = siv.find_name::<TextView>(row_name) {
-            row.set_content(match text {
-                Some(txt) => transform(txt),
-                _ => String::from(" "),
-            });
-        }
-    }
-
-    if let Some(ref mut main_row) = siv.find_name::<TextView>(MAIN_ROW) {
-        main_row.set_content(card_set.get_main_text());
-    }
-    set_optional_row(siv, ROW_2, card_set.get_pronunciation(), |p| p.to_string());
-    set_optional_row(siv, ROW_3, card_set.get_desc(), |description| {
-        format!(" Description: {}", description)
-    });
-    set_optional_row(siv, ROW_4, card_set.get_example(), |example| {
-        format!(" Example:     {}", example)
-    });
-    set_optional_row(siv, SHORTCUTS, card_set.get_shortcuts(), |shortcuts| {
-        shortcuts.to_string()
-    });
-    set_optional_row(siv, TITLE, card_set.get_title(), |name| {
-        format!(
-            "\n  {}: {}/{}",
-            name,
-            card_set.current_card + 1,
-            card_set.cards_len()
-        )
-    });
+fn reverse_color_row(view: TextView) -> Layer<ResizedView<TextView>> {
+    Layer::with_color(
+        view.effect(Effect::Reverse).fixed_height(1),
+        ColorStyle::new(
+            ColorType::Palette(PaletteColor::Background),
+            ColorType::Palette(PaletteColor::Primary),
+        ),
+    )
 }
 
-fn compose_card_layout() -> LinearLayout {
-    LinearLayout::vertical()
-        .child(TextView::new("").with_name(TITLE).fixed_height(2))
-        .child(
-            TextView::new("")
-                .center()
-                .effect(Effect::Bold)
-                .v_align(VAlign::Bottom)
-                .with_name(MAIN_ROW)
-                .resized(SizeConstraint::Full, SizeConstraint::Full),
-        )
-        .child(
-            LinearLayout::vertical()
-                .child(TextView::new(" ").max_height(1))
-                .child(TextView::new(" ").center().with_name(ROW_2).fixed_height(2))
-                .child(TextView::new(" ").resized(SizeConstraint::Full, SizeConstraint::Full))
-                .child(TextView::new(" ").with_name(ROW_3).max_height(4))
-                .child(TextView::new(" ").max_height(1))
-                .child(TextView::new(" ").with_name(ROW_4).max_height(4))
-                .child(TextView::new(" ").max_height(1))
-                .child(
-                    TextView::new(" ")
-                        .h_align(HAlign::Right)
-                        .with_name(SHORTCUTS)
-                        .fixed_height(2),
-                ),
-        )
+fn create_term_row(value: &str) -> ResizedView<TextView> {
+    TextView::new(value)
+        .center()
+        .effect(Effect::Bold)
+        .v_align(VAlign::Bottom)
+        .resized(SizeConstraint::Full, SizeConstraint::Full)
 }
