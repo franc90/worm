@@ -1,6 +1,6 @@
+use cursive::Cursive;
 use cursive::event::Event;
 use cursive::views::Dialog;
-use cursive::Cursive;
 
 use crate::card::card_logic;
 use crate::help;
@@ -50,25 +50,25 @@ impl DisplayEventInHelp for Event {
 }
 
 pub trait ShortcutData {
-    fn event(&self) -> Event;
+    fn event(&self) -> Vec<Event>;
     fn desc(&self) -> String;
     fn call(&self, siv: &mut Cursive);
 }
 
 impl ShortcutData for Shortcut {
-    fn event(&self) -> Event {
+    fn event(&self) -> Vec<Event> {
         match self {
-            Shortcut::Quit => Event::Char('q'),
-            Shortcut::ReverseCard => Event::Char(' '),
-            Shortcut::PrevCard => Event::Char('p'),
-            Shortcut::NextCard => Event::Char('n'),
-            Shortcut::TogglePronunciationVisibility => Event::Char('s'),
-            Shortcut::ToggleDescriptionVisibility => Event::Char('d'),
-            Shortcut::ToggleExampleVisibility => Event::Char('e'),
-            Shortcut::ToggleTitleVisibility => Event::Char('t'),
-            Shortcut::ToggleHintsVisibility => Event::Char('h'),
-            Shortcut::ToggleZenMode => Event::Char('z'),
-            Shortcut::Help => Event::Char('?'),
+            Shortcut::Quit => vec![Event::Char('q')],
+            Shortcut::ReverseCard => vec![Event::Char(' ')],
+            Shortcut::PrevCard => vec![Event::Char('p'), Event::Char('h')],
+            Shortcut::NextCard => vec![Event::Char('n'), Event::Char('l')],
+            Shortcut::TogglePronunciationVisibility => vec![Event::Char('s')],
+            Shortcut::ToggleDescriptionVisibility => vec![Event::Char('d')],
+            Shortcut::ToggleExampleVisibility => vec![Event::Char('e')],
+            Shortcut::ToggleTitleVisibility => vec![Event::Char('t')],
+            Shortcut::ToggleHintsVisibility => vec![Event::Char('b')],
+            Shortcut::ToggleZenMode => vec![Event::Char('z')],
+            Shortcut::Help => vec![Event::Char('?')],
         }
     }
 

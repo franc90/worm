@@ -35,7 +35,9 @@ fn main() {
     siv.set_user_data(card_set.clone());
     shortcuts::ALL_SHORTCUTS.iter().for_each(|shortcut| {
         let shortcut = shortcut.clone();
-        siv.add_global_callback(shortcut.event(), move |siv| shortcut.call(siv));
+        shortcut.event().iter().for_each(|event| {
+            siv.add_global_callback(event.clone(), move |siv| shortcut.call(siv));
+        })
     });
 
     siv.set_on_pre_event(Event::WindowResize, |s| {

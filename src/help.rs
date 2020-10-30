@@ -1,7 +1,7 @@
-use cursive::Cursive;
 use cursive::theme::Effect;
 use cursive::traits::*;
 use cursive::views::{Dialog, LinearLayout, TextView};
+use cursive::Cursive;
 
 use crate::shortcuts;
 use crate::shortcuts::{DisplayEventInHelp, ShortcutData};
@@ -17,9 +17,11 @@ pub fn show_help(siv: &mut Cursive) {
         LinearLayout::vertical().child(TextView::new("Help").effect(Effect::Bold).fixed_height(2));
 
     shortcuts::ALL_SHORTCUTS.iter().for_each(|shortcut| {
+        let texts: Vec<String> = shortcut.event().iter().map(|e| e.help_text()).collect();
+
         layout.add_child(TextView::new(format!(
-            "{:5}   {}",
-            shortcut.event().help_text(),
+            "{:7}   {}",
+            texts.join("/"),
             shortcut.desc()
         )))
     });
