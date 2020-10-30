@@ -6,6 +6,8 @@ use cursive::Cursive;
 
 use crate::card::card_data::CardSet;
 use crate::card::card_ui::display;
+use crate::help::HELP_DIALOG;
+use cursive::views::Dialog;
 
 pub fn next_card(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.next_card());
@@ -53,6 +55,9 @@ fn update_card_set<F>(siv: &mut Cursive, cb: F)
 where
     F: FnOnce(&mut CardSet),
 {
+    if let Some(_) = siv.find_name::<Dialog>(HELP_DIALOG) {
+        return;
+    }
     if let Some(card_set) = siv.user_data::<Rc<RefCell<CardSet>>>().cloned() {
         let mut card_set: RefMut<CardSet> = RefCell::borrow_mut(&card_set);
         cb(&mut card_set);
