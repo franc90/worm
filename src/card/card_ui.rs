@@ -9,7 +9,7 @@ use cursive::views::{Layer, LinearLayout, ResizedView, TextView};
 use crate::card::card_data::CardSet;
 
 const CARD_LAYOUT_NAME: &str = "card_layout";
-const HINTS_TEXT: &str = "| q:quit | ?:help ";
+const HINTS_TEXT: &str = "| q:quit | ?:help |";
 const DESCRIPTION_PREFIX: &str = "Description: ";
 const EXAMPLE_PREFIX: &str = "Example: ";
 
