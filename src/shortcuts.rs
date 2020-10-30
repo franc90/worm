@@ -62,7 +62,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ReverseCard => vec![Event::Char(' ')],
             Shortcut::PrevCard => vec![Event::Char('p'), Event::Char('h')],
             Shortcut::NextCard => vec![Event::Char('n'), Event::Char('l')],
-            Shortcut::TogglePronunciationVisibility => vec![Event::Char('s')],
+            Shortcut::TogglePronunciationVisibility => vec![Event::Char('r')],
             Shortcut::ToggleDescriptionVisibility => vec![Event::Char('d')],
             Shortcut::ToggleExampleVisibility => vec![Event::Char('e')],
             Shortcut::ToggleTitleVisibility => vec![Event::Char('t')],
