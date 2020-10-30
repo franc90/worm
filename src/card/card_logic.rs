@@ -35,8 +35,8 @@ pub fn toggle_title(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_title());
 }
 
-pub fn toggle_shortcuts(siv: &mut Cursive) {
-    update_card_set(siv, |card_set| card_set.toggle_show_shortcuts());
+pub fn toggle_hints(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_show_hints());
 }
 
 pub fn toggle_zen_mode(siv: &mut Cursive) {

@@ -14,7 +14,7 @@ pub const ALL_SHORTCUTS: &'static [Shortcut] = &[
     Shortcut::ToggleDescriptionVisibility,
     Shortcut::ToggleExampleVisibility,
     Shortcut::ToggleTitleVisibility,
-    Shortcut::ToggleShortcutsVisibility,
+    Shortcut::ToggleHintsVisibility,
     Shortcut::ToggleZenMode,
     Shortcut::Help,
 ];
@@ -29,7 +29,7 @@ pub enum Shortcut {
     ToggleDescriptionVisibility,
     ToggleExampleVisibility,
     ToggleTitleVisibility,
-    ToggleShortcutsVisibility,
+    ToggleHintsVisibility,
     ToggleZenMode,
     Help,
 }
@@ -66,7 +66,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleDescriptionVisibility => Event::Char('d'),
             Shortcut::ToggleExampleVisibility => Event::Char('e'),
             Shortcut::ToggleTitleVisibility => Event::Char('t'),
-            Shortcut::ToggleShortcutsVisibility => Event::Char('m'),
+            Shortcut::ToggleHintsVisibility => Event::Char('h'),
             Shortcut::ToggleZenMode => Event::Char('z'),
             Shortcut::Help => Event::Char('?'),
         }
@@ -79,10 +79,10 @@ impl ShortcutData for Shortcut {
             Shortcut::PrevCard => "Previous card",
             Shortcut::NextCard => "Next card",
             Shortcut::TogglePronunciationVisibility => "Show/hide pronunciation",
-            Shortcut::ToggleDescriptionVisibility => "Show/hide description",
-            Shortcut::ToggleExampleVisibility => "Show/hide example",
-            Shortcut::ToggleTitleVisibility => "Show/hide title",
-            Shortcut::ToggleShortcutsVisibility => "Show/hide shortcuts",
+            Shortcut::ToggleDescriptionVisibility => "Show/hide term description",
+            Shortcut::ToggleExampleVisibility => "Show/hide example sentence",
+            Shortcut::ToggleTitleVisibility => "Show/hide title bar",
+            Shortcut::ToggleHintsVisibility => "Show/hide hints bar",
             Shortcut::ToggleZenMode => "Toggle zen mode",
             Shortcut::Help => "Show help",
         }
@@ -99,7 +99,7 @@ impl ShortcutData for Shortcut {
             Shortcut::ToggleDescriptionVisibility => card_logic::toggle_description(siv),
             Shortcut::ToggleExampleVisibility => card_logic::toggle_example(siv),
             Shortcut::ToggleTitleVisibility => card_logic::toggle_title(siv),
-            Shortcut::ToggleShortcutsVisibility => card_logic::toggle_shortcuts(siv),
+            Shortcut::ToggleHintsVisibility => card_logic::toggle_hints(siv),
             Shortcut::ToggleZenMode => card_logic::toggle_zen_mode(siv),
             Shortcut::Help => help::show_help(siv),
         }

@@ -58,11 +58,11 @@ pub fn display(siv: &mut Cursive, card_set: &CardSet) {
         layout.add_child(TextView::new(" ").fixed_height(-weight as usize));
     }
 
-    card_set.get_shortcuts().iter().for_each(|shortcuts| {
+    if card_set.show_hints() {
         layout.add_child(reverse_color_row(
-            TextView::new(*shortcuts).h_align(HAlign::Right),
+            TextView::new(SHORTCUTS_TEXT).h_align(HAlign::Right),
         ))
-    });
+    }
 
     siv.add_fullscreen_layer(
         layout

@@ -1,5 +1,3 @@
-use crate::card::card_ui::SHORTCUTS_TEXT;
-
 #[derive(serde::Serialize, serde::Deserialize, Debug, PartialOrd, PartialEq)]
 pub struct CardData {
     pub word: String,
@@ -19,7 +17,7 @@ pub struct CardSet {
     show_description: bool,
     show_example: bool,
     show_title: bool,
-    show_shortcuts: bool,
+    show_hints: bool,
     zen_mode: bool,
 }
 
@@ -34,7 +32,7 @@ impl CardSet {
             show_description: false,
             show_example: false,
             show_title: true,
-            show_shortcuts: true,
+            show_hints: true,
             zen_mode: false,
         }
     }
@@ -50,7 +48,7 @@ impl CardSet {
         if self.show_title {
             weight -= 1;
         }
-        if self.show_shortcuts {
+        if self.show_hints {
             weight += 1;
         }
 
@@ -90,9 +88,9 @@ impl CardSet {
         self.show_title = !self.show_title;
     }
 
-    pub fn toggle_show_shortcuts(&mut self) {
+    pub fn toggle_show_hints(&mut self) {
         self.exit_zen_mode_and_turn_optional_elems_off();
-        self.show_shortcuts = !self.show_shortcuts;
+        self.show_hints = !self.show_hints;
     }
 
     fn exit_zen_mode_and_turn_optional_elems_off(&mut self) {
@@ -101,7 +99,7 @@ impl CardSet {
             self.show_description = false;
             self.show_example = false;
             self.show_title = false;
-            self.show_shortcuts = false;
+            self.show_hints = false;
             self.zen_mode = false;
         }
     }
@@ -127,12 +125,8 @@ impl CardSet {
         }
     }
 
-    pub fn get_shortcuts(&self) -> Option<&str> {
-        if self.show_shortcuts && !self.zen_mode {
-            Some(SHORTCUTS_TEXT)
-        } else {
-            None
-        }
+    pub fn show_hints(&self) -> bool {
+        self.show_hints && !self.zen_mode
     }
 
     pub fn get_pronunciation(&self) -> Option<&str> {
@@ -214,31 +208,31 @@ mod tests {
     }
 
     #[test]
-    fn show_shortcuts_by_default() {
+    fn show_hints_by_default() {
         let set = card_set("new set");
 
-        assert_eq!(true, set.show_shortcuts);
-        assert_eq!(Some(SHORTCUTS_TEXT), set.get_shortcuts());
+        assert_eq!(true, set.show_hints);
+        assert!(set.show_hints());
     }
 
     #[test]
-    fn show_no_shortcuts_when_disabled() {
+    fn show_no_hints_when_disabled() {
         let mut set = card_set("new set");
-        assert_eq!(true, set.show_shortcuts);
+        assert_eq!(true, set.show_hints);
 
-        set.toggle_show_shortcuts();
+        set.toggle_show_hints();
 
-        assert_eq!(None, set.get_shortcuts());
+        assert!(!set.show_hints());
     }
 
     #[test]
-    fn show_no_shortcuts_when_in_zen() {
+    fn show_no_hints_when_in_zen() {
         let mut set = card_set("new set");
-        assert_eq!(true, set.show_shortcuts);
+        assert_eq!(true, set.show_hints);
 
         set.toggle_zen_mode();
 
-        assert_eq!(None, set.get_shortcuts());
+        assert!(!set.show_hints());
     }
 
     #[test]
@@ -436,7 +430,7 @@ mod tests {
         assert!(set.get_desc().is_none());
         assert!(set.get_title().is_none());
         assert!(set.get_pronunciation().is_none());
-        assert!(set.get_shortcuts().is_none());
+        assert!(!set.show_hints());
     }
 
     #[test]
@@ -459,7 +453,7 @@ mod tests {
         assert!(set.get_desc().is_some());
         assert!(set.get_title().is_none());
         assert!(set.get_pronunciation().is_none());
-        assert!(set.get_shortcuts().is_none());
+        assert!(!set.show_hints());
     }
 
     #[test]
@@ -482,7 +476,7 @@ mod tests {
         assert!(set.get_desc().is_none());
         assert!(set.get_title().is_some());
         assert!(set.get_pronunciation().is_none());
-        assert!(set.get_shortcuts().is_none());
+        assert!(!set.show_hints());
     }
 
     #[test]
@@ -505,11 +499,11 @@ mod tests {
         assert!(set.get_desc().is_none());
         assert!(set.get_title().is_none());
         assert!(set.get_pronunciation().is_some());
-        assert!(set.get_shortcuts().is_none());
+        assert!(!set.show_hints());
     }
 
     #[test]
-    fn when_in_zen_mode_showing_shortcuts_exits_zen_and_overrides_other_settings() {
+    fn when_in_zen_mode_showing_hints_exits_zen_and_overrides_other_settings() {
         let mut set = card_set("new set");
         show_everything(&mut set);
 
@@ -521,14 +515,14 @@ mod tests {
         set.toggle_zen_mode();
         assert_all_optional_views_are_hidden(&set);
 
-        // turn zen off and show only shortcuts
-        set.toggle_show_shortcuts();
+        // turn zen off and show only hints
+        set.toggle_show_hints();
         assert!(!set.zen_mode);
         assert!(set.get_example().is_none());
         assert!(set.get_desc().is_none());
         assert!(set.get_title().is_none());
         assert!(set.get_pronunciation().is_none());
-        assert!(set.get_shortcuts().is_some());
+        assert!(set.show_hints());
     }
 
     #[test]
@@ -577,10 +571,10 @@ mod tests {
     }
 
     #[test]
-    fn shortcuts_tilts_weight_bottom() {
+    fn hints_tilt_weight_bottom() {
         let mut set = card_set("test set");
         hide_everything(&mut set);
-        set.show_shortcuts = true;
+        set.show_hints = true;
 
         assert_eq!(
             1,
@@ -606,10 +600,7 @@ mod tests {
         hide_everything(&mut set);
         set.show_description = true;
 
-        assert_eq!(
-            2,
-            set.count_view_weight(10, 10, usize::max_value())
-        );
+        assert_eq!(2, set.count_view_weight(10, 10, usize::max_value()));
     }
 
     #[test]
@@ -630,10 +621,7 @@ mod tests {
         hide_everything(&mut set);
         set.show_example = true;
 
-        assert_eq!(
-            2,
-            set.count_view_weight(10, usize::max_value(), 10)
-        );
+        assert_eq!(2, set.count_view_weight(10, usize::max_value(), 10));
     }
 
     fn gen_card_data(nr: i8) -> CardData {
@@ -650,7 +638,7 @@ mod tests {
         set.show_example = true;
         set.show_description = true;
         set.show_title = true;
-        set.show_shortcuts = true;
+        set.show_hints = true;
         set.show_pronunciation = true;
     }
 
@@ -658,7 +646,7 @@ mod tests {
         set.show_example = false;
         set.show_description = false;
         set.show_title = false;
-        set.show_shortcuts = false;
+        set.show_hints = false;
         set.show_pronunciation = false;
     }
 
@@ -667,7 +655,7 @@ mod tests {
         assert!(set.get_desc().is_some());
         assert!(set.get_title().is_some());
         assert!(set.get_pronunciation().is_some());
-        assert!(set.get_shortcuts().is_some());
+        assert!(set.show_hints());
     }
 
     fn assert_all_optional_views_are_hidden(set: &CardSet) {
@@ -675,6 +663,6 @@ mod tests {
         assert!(set.get_desc().is_none());
         assert!(set.get_title().is_none());
         assert!(set.get_pronunciation().is_none());
-        assert!(set.get_shortcuts().is_none());
+        assert!(!set.show_hints());
     }
 }
