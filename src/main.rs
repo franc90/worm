@@ -8,6 +8,8 @@ use std::rc::Rc;
 use clap::{App, Arg, ArgMatches};
 use cursive::event::Event;
 use log::info;
+use rand::seq::SliceRandom;
+use rand::thread_rng;
 use simplelog::{Config, LevelFilter, WriteLogger};
 
 use card::card_logic;
@@ -25,10 +27,11 @@ fn main() {
 
     let matches = parse_comman_line_args();
     let input_file_path = matches.value_of("INPUT").unwrap();
-    let cards = read_cards_from_file(input_file_path).unwrap();
+    let shuffle = matches.is_present("shuffle");
+    let cards = read_cards_from_file(input_file_path, shuffle).unwrap();
     let card_set = CardSet::new(input_file_path, cards);
     let card_set = Rc::new(RefCell::new(card_set));
-    info!("Read card set: {:?}", card_set);
+    info!("Read card set: {}", input_file_path);
 
     info!("Setting up cursive");
     let mut siv = cursive::default();
@@ -71,13 +74,26 @@ fn parse_comman_line_args<'a>() -> ArgMatches<'a> {
                 .required(true)
                 .index(1),
         )
+        .arg(
+            Arg::with_name("shuffle")
+                .short("s")
+                .long("shuffle")
+                .help("shuffle input to create unique experience"),
+        )
         .get_matches();
     matches
 }
 
-fn read_cards_from_file<P: AsRef<Path>>(path: P) -> Result<Vec<CardData>, Box<dyn Error>> {
+fn read_cards_from_file<P: AsRef<Path>>(
+    path: P,
+    shuffle: bool,
+) -> Result<Vec<CardData>, Box<dyn Error>> {
     let file = File::open(path)?;
     let reader = BufReader::new(file);
-    let data = serde_json::from_reader(reader)?;
+    let mut data: Vec<CardData> = serde_json::from_reader(reader)?;
+    if shuffle {
+        info!("shuffling card set");
+        data.shuffle(&mut thread_rng());
+    }
     Ok(data)
 }
