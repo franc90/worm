@@ -23,11 +23,14 @@ mod help;
 mod shortcuts;
 
 fn main() {
-    set_up_logger();
-
     let matches = parse_comman_line_args();
     let input_file_path = matches.value_of("INPUT").unwrap();
     let shuffle = matches.is_present("shuffle");
+
+    if matches.is_present("verbose") {
+        set_up_logger();
+    }
+
     let cards = read_cards_from_file(input_file_path, shuffle).unwrap();
     let card_set = CardSet::new(input_file_path, cards);
     let card_set = Rc::new(RefCell::new(card_set));
@@ -79,6 +82,12 @@ fn parse_comman_line_args<'a>() -> ArgMatches<'a> {
                 .short("s")
                 .long("shuffle")
                 .help("shuffle input to create unique experience"),
+        )
+        .arg(
+            Arg::with_name("verbose")
+                .short("v")
+                .long("verbose")
+                .help("turns on logging"),
         )
         .get_matches();
     matches
