@@ -27,8 +27,8 @@ fn main() {
     let input_file_path = matches.value_of("INPUT").unwrap();
     let shuffle = matches.is_present("shuffle");
 
-    if matches.is_present("verbose") {
-        set_up_logger();
+    if let Some(file) = matches.value_of("debug") {
+        set_up_logger(file);
     }
 
     let cards = read_cards_from_file(input_file_path, shuffle).unwrap();
@@ -59,11 +59,11 @@ fn main() {
     siv.run();
 }
 
-fn set_up_logger() {
+fn set_up_logger(debug_file: &str) {
     WriteLogger::init(
         LevelFilter::Info,
         Config::default(),
-        File::create("worm.log").unwrap(),
+        File::create(debug_file).unwrap(),
     )
     .unwrap();
 }
@@ -84,10 +84,11 @@ fn parse_comman_line_args<'a>() -> ArgMatches<'a> {
                 .help("shuffle input to create unique experience"),
         )
         .arg(
-            Arg::with_name("verbose")
-                .short("v")
-                .long("verbose")
-                .help("turns on logging"),
+            Arg::with_name("debug")
+                .short("d")
+                .long("debug")
+                .value_name("DEBUG_FILE")
+                .help("debug file name; turns on logging"),
         )
         .get_matches();
     matches
