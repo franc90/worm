@@ -21,6 +21,8 @@ pub struct CardSet {
     zen_mode: bool,
 }
 
+const EMPTY_SET: &'static str = "EMPTY SET";
+
 impl CardSet {
     pub fn new(name: &str, cards: Vec<CardData>) -> Self {
         Self {
@@ -109,11 +111,15 @@ impl CardSet {
     }
 
     pub fn get_main_text(&self) -> &str {
-        let card = self.get_current_card().unwrap();
-        if self.reversed {
-            &card.translated
-        } else {
-            &card.word
+        match self.get_current_card() {
+            Some(card) => {
+                if self.reversed {
+                    &card.translated
+                } else {
+                    &card.word
+                }
+            }
+            None => EMPTY_SET,
         }
     }
 
@@ -130,7 +136,7 @@ impl CardSet {
     }
 
     pub fn get_pronunciation(&self) -> Option<&str> {
-        let card = self.get_current_card().unwrap();
+        let card = self.get_current_card()?;
         if self.show_pronunciation && !self.zen_mode && !self.reversed {
             Some(&card.pronunciation)
         } else {
@@ -139,7 +145,7 @@ impl CardSet {
     }
 
     pub fn get_desc(&self) -> Option<&str> {
-        let card = self.get_current_card().unwrap();
+        let card = self.get_current_card()?;
         if self.show_description && !self.zen_mode && !self.reversed {
             Some(&card.explanation)
         } else {
@@ -148,7 +154,7 @@ impl CardSet {
     }
 
     pub fn get_example(&self) -> Option<&str> {
-        let card = self.get_current_card().unwrap();
+        let card = self.get_current_card()?;
         if self.show_example && !self.zen_mode && !self.reversed {
             Some(&card.sentence)
         } else {
@@ -187,6 +193,37 @@ mod tests {
 
     fn card_set(title: &str) -> CardSet {
         CardSet::new(title, vec![gen_card_data(0), gen_card_data(1)])
+    }
+    fn empty_card_set(title: &str) -> CardSet {
+        CardSet::new(title, vec![])
+    }
+
+    #[test]
+    fn show_default_term_when_empty_set() {
+        let set = empty_card_set("empty set");
+        assert_eq!(EMPTY_SET, set.get_main_text());
+    }
+
+    #[test]
+    fn show_default_term_when_reversed_empty_set() {
+        let mut set = empty_card_set("empty set");
+        set.reversed = true;
+
+        assert_eq!(EMPTY_SET, set.get_main_text());
+    }
+
+    #[test]
+    fn show_term() {
+        let set = card_set("regular set");
+
+        assert_eq!("word0", set.get_main_text());
+    }
+
+    #[test]
+    fn show_translated_term_when_reversed() {
+        let mut set = card_set("regular set");
+        set.reversed = true;
+        assert_eq!("translated0", set.get_main_text());
     }
 
     #[test]
@@ -274,6 +311,15 @@ mod tests {
     }
 
     #[test]
+    fn show_no_pronunciation_when_empty_card_set() {
+        let mut set = empty_card_set("empty set");
+        set.zen_mode = false;
+        set.show_pronunciation = true;
+
+        assert_eq!(None, set.get_pronunciation());
+    }
+
+    #[test]
     fn show_no_term_description_by_default() {
         let set = card_set("new set");
 
@@ -314,6 +360,16 @@ mod tests {
     }
 
     #[test]
+    fn show_no_term_description_when_empty_card_set() {
+        let mut set = empty_card_set("empty set");
+        set.show_description = true;
+        set.zen_mode = false;
+        set.reversed = false;
+
+        assert_eq!(None, set.get_desc());
+    }
+
+    #[test]
     fn show_no_example_by_default() {
         let set = card_set("new set");
 
@@ -349,6 +405,16 @@ mod tests {
         set.show_example = true;
         set.zen_mode = false;
         set.reversed = true;
+
+        assert_eq!(None, set.get_example());
+    }
+
+    #[test]
+    fn show_no_example_when_empty_card_set() {
+        let mut set = empty_card_set("empty set");
+        set.show_example = true;
+        set.zen_mode = false;
+        set.reversed = false;
 
         assert_eq!(None, set.get_example());
     }
