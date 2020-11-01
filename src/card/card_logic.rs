@@ -46,9 +46,7 @@ pub fn toggle_zen_mode(siv: &mut Cursive) {
 }
 
 pub fn refresh(siv: &mut Cursive) {
-    update_card_set(siv, |card_set| {
-        card_set;
-    });
+    update_card_set(siv, |_| {});
 }
 
 fn update_card_set<F>(siv: &mut Cursive, cb: F)
