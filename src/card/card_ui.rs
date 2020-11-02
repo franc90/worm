@@ -75,6 +75,11 @@ pub fn display(siv: &mut Cursive, card_set: &CardSet) {
             card_set.current_card + 1,
             card_set.cards_len()
         );
+        let title = if card_set.repeat_current_card() {
+            format!("{} TO BE REPEATED", title)
+        } else {
+            title
+        };
         view.get_inner_mut().set_content(title);
         view.set_height(SizeConstraint::Fixed(1));
     });

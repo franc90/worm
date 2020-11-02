@@ -25,6 +25,10 @@ pub fn toggle_pronunciation(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_pronunciation());
 }
 
+pub fn toggle_card_needs_repetition(siv: &mut Cursive) {
+    update_card_set(siv, |card_set| card_set.toggle_repeat_card());
+}
+
 pub fn toggle_description(siv: &mut Cursive) {
     update_card_set(siv, |card_set| card_set.toggle_show_description());
 }

@@ -5,6 +5,8 @@ pub struct CardData {
     pub explanation: String,
     pub pronunciation: String,
     pub sentence: String,
+    #[serde(skip)]
+    pub to_be_repeated: bool,
 }
 
 #[derive(Debug)]
@@ -68,6 +70,12 @@ impl CardSet {
         if !self.reversed {
             self.exit_zen_mode_and_turn_optional_elems_off();
             self.show_pronunciation = !self.show_pronunciation;
+        }
+    }
+
+    pub fn toggle_repeat_card(&mut self) {
+        if let Some(card) = self.cards.get_mut(self.current_card) {
+            card.to_be_repeated = !card.to_be_repeated;
         }
     }
 
@@ -162,6 +170,12 @@ impl CardSet {
         }
     }
 
+    pub fn repeat_current_card(&self) -> bool {
+        self.get_current_card()
+            .map(|card| card.to_be_repeated)
+            .unwrap_or(false)
+    }
+
     fn get_current_card(&self) -> Option<&CardData> {
         self.cards.get(self.current_card)
     }
@@ -196,6 +210,20 @@ mod tests {
     }
     fn empty_card_set(title: &str) -> CardSet {
         CardSet::new(title, vec![])
+    }
+
+    #[test]
+    fn dont_repeat_card_by_default() {
+        let set = card_set("regular set");
+        assert!(!set.repeat_current_card())
+    }
+
+    #[test]
+    fn repeat_card_when_toggled() {
+        let mut  set = card_set("regular set");
+        set.toggle_repeat_card();
+
+        assert!(set.repeat_current_card())
     }
 
     #[test]
@@ -697,6 +725,7 @@ mod tests {
             explanation: format!("explanation{}", nr),
             pronunciation: format!("pronunciation{}", nr),
             sentence: format!("sentence{}", nr),
+            to_be_repeated: false,
         }
     }
 
